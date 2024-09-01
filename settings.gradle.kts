@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "AntForestX"
 include(":app")
+include(":core")

@@ -12,7 +12,7 @@ android {
     compileSdk = BuildConfig.CompileSdk
 
     defaultConfig {
-        applicationId = "org.zipper.ant.forest.xposed"
+        applicationId = BuildConfig.ApplicationId
         minSdk = BuildConfig.MinSdk
         targetSdk = BuildConfig.TargetSdk
         versionCode = 1
@@ -52,7 +52,7 @@ android {
 
 dependencies {
 
-    compileOnly(fileTree("dir" to "libs", "includes" to listOf("*.jar")))
+    implementation(project(":core"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
