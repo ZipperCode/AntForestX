@@ -1,12 +1,13 @@
 package org.xposed.antforestx.core.ant
 
 import kotlinx.serialization.json.JsonObject
+import org.json.JSONObject
 import org.xposed.antforestx.core.ant.RpcUtil.request
 
 object AntOrchardRpcCall {
     private const val VERSION = "0.1.2401111000.31"
 
-    suspend fun orchardIndex(): Result<JsonObject> {
+    suspend fun orchardIndex(): Result<JSONObject> {
         return request(
             "com.alipay.antfarm.orchardIndex",
             "[{\"inHomepage\":\"true\",\"requestType\":\"NORMAL\",\"sceneCode\":\"ORCHARD\",\"source\":\"ch_appcenter__chsub_9patch\",\"version\":\""
@@ -14,7 +15,7 @@ object AntOrchardRpcCall {
         )
     }
 
-    suspend fun mowGrassInfo(): Result<JsonObject> {
+    suspend fun mowGrassInfo(): Result<JSONObject> {
         return request(
             "com.alipay.antorchard.mowGrassInfo",
             "[{\"requestType\":\"NORMAL\",\"sceneCode\":\"ORCHARD\",\"showRanking\":true,\"source\":\"ch_appcenter__chsub_9patch\",\"version\":\""
@@ -22,7 +23,7 @@ object AntOrchardRpcCall {
         )
     }
 
-    suspend fun batchHireAnimalRecommend(orchardUserId: String): Result<JsonObject> {
+    suspend fun batchHireAnimalRecommend(orchardUserId: String): Result<JSONObject> {
         return request(
             "com.alipay.antorchard.batchHireAnimalRecommend",
             "[{\"orchardUserId\":\"" + orchardUserId
@@ -31,7 +32,7 @@ object AntOrchardRpcCall {
         )
     }
 
-    suspend fun batchHireAnimal(recommendGroupList: List<String?>?): Result<JsonObject> {
+    suspend fun batchHireAnimal(recommendGroupList: List<String?>?): Result<JSONObject> {
         return request(
             "com.alipay.antorchard.batchHireAnimal",
             "[{\"recommendGroupList\":[" + java.lang.String.join(",", recommendGroupList)
@@ -40,7 +41,7 @@ object AntOrchardRpcCall {
         )
     }
 
-    suspend fun extraInfoGet(): Result<JsonObject> {
+    suspend fun extraInfoGet(): Result<JSONObject> {
         return request(
             "com.alipay.antorchard.extraInfoGet",
             "[{\"from\":\"entry\",\"requestType\":\"NORMAL\",\"sceneCode\":\"FUGUO\",\"source\":\"ch_appcenter__chsub_9patch\",\"version\":\""
@@ -48,7 +49,7 @@ object AntOrchardRpcCall {
         )
     }
 
-    suspend fun extraInfoSet(): Result<JsonObject> {
+    suspend fun extraInfoSet(): Result<JSONObject> {
         return request(
             "com.alipay.antorchard.extraInfoSet",
             "[{\"bizCode\":\"fertilizerPacket\",\"bizParam\":{\"action\":\"queryCollectFertilizerPacket\"},\"requestType\":\"NORMAL\",\"sceneCode\":\"ORCHARD\",\"source\":\"ch_appcenter__chsub_9patch\",\"version\":\""
@@ -56,7 +57,7 @@ object AntOrchardRpcCall {
         )
     }
 
-    suspend fun querySubplotsActivity(treeLevel: String): Result<JsonObject> {
+    suspend fun querySubplotsActivity(treeLevel: String): Result<JSONObject> {
         return request(
             "com.alipay.antorchard.querySubplotsActivity",
             "[{\"activityType\":[\"WISH\",\"BATTLE\",\"HELP_FARMER\",\"DEFOLIATION\",\"CAMP_TAKEOVER\"],\"inHomepage\":false,\"requestType\":\"NORMAL\",\"sceneCode\":\"ORCHARD\",\"source\":\"ch_appcenter__chsub_9patch\",\"treeLevel\":\""
@@ -64,7 +65,7 @@ object AntOrchardRpcCall {
         )
     }
 
-    suspend fun triggerSubplotsActivity(activityId: String, activityType: String, optionKey: String): Result<JsonObject> {
+    suspend fun triggerSubplotsActivity(activityId: String, activityType: String, optionKey: String): Result<JSONObject> {
         return request(
             "com.alipay.antorchard.triggerSubplotsActivity",
             "[{\"activityId\":\"" + activityId + "\",\"activityType\":\"" + activityType
@@ -74,7 +75,7 @@ object AntOrchardRpcCall {
         )
     }
 
-    suspend fun receiveOrchardRights(activityId: String, activityType: String): Result<JsonObject> {
+    suspend fun receiveOrchardRights(activityId: String, activityType: String): Result<JSONObject> {
         return request(
             "com.alipay.antorchard.receiveOrchardRights",
             "[{\"activityId\":\"" + activityId + "\",\"activityType\":\"" + activityType
@@ -84,7 +85,7 @@ object AntOrchardRpcCall {
     }
 
     /* 七日礼包 */
-    suspend fun drawLottery(): Result<JsonObject> {
+    suspend fun drawLottery(): Result<JSONObject> {
         return request(
             "com.alipay.antorchard.drawLottery",
             "[{\"lotteryScene\":\"receiveLotteryPlus\",\"requestType\":\"NORMAL\",\"sceneCode\":\"ORCHARD\",\"source\":\"ch_appcenter__chsub_9patch\",\"version\":\""
@@ -92,7 +93,7 @@ object AntOrchardRpcCall {
         )
     }
 
-    suspend fun orchardSyncIndex(): Result<JsonObject> {
+    suspend fun orchardSyncIndex(): Result<JSONObject> {
         return request(
             "com.alipay.antorchard.orchardSyncIndex",
             "[{\"requestType\":\"NORMAL\",\"sceneCode\":\"ORCHARD\",\"source\":\"ch_appcenter__chsub_9patch\",\"syncIndexTypes\":\"QUERY_MAIN_ACCOUNT_INFO\",\"version\":\""
@@ -100,7 +101,7 @@ object AntOrchardRpcCall {
         )
     }
 
-    suspend fun orchardSpreadManure(wua: String): Result<JsonObject> {
+    suspend fun orchardSpreadManure(wua: String): Result<JSONObject> {
         return request(
             "com.alipay.antfarm.orchardSpreadManure",
             "[{\"requestType\":\"NORMAL\",\"sceneCode\":\"ORCHARD\",\"source\":\"ch_appcenter__chsub_9patch\",\"useWua\":true,\"version\":\""
@@ -108,7 +109,7 @@ object AntOrchardRpcCall {
         )
     }
 
-    suspend fun receiveTaskAward(sceneCode: String, taskType: String): Result<JsonObject> {
+    suspend fun receiveTaskAward(sceneCode: String, taskType: String): Result<JSONObject> {
         return request(
             "com.alipay.antiep.receiveTaskAward",
             "[{\"ignoreLimit\":false,\"requestType\":\"NORMAL\",\"sceneCode\":\"" + sceneCode
@@ -117,7 +118,7 @@ object AntOrchardRpcCall {
         )
     }
 
-    suspend fun orchardListTask(): Result<JsonObject> {
+    suspend fun orchardListTask(): Result<JSONObject> {
         return request(
             "com.alipay.antfarm.orchardListTask",
             "[{\"plantHiddenMMC\":\"false\",\"requestType\":\"NORMAL\",\"sceneCode\":\"ORCHARD\",\"source\":\"ch_appcenter__chsub_9patch\",\"version\":\""
@@ -125,7 +126,7 @@ object AntOrchardRpcCall {
         )
     }
 
-    suspend fun orchardSign(): Result<JsonObject> {
+    suspend fun orchardSign(): Result<JSONObject> {
         return request(
             "com.alipay.antfarm.orchardSign",
             "[{\"requestType\":\"NORMAL\",\"sceneCode\":\"ORCHARD\",\"signScene\":\"ANTFARM_ORCHARD_SIGN_V2\",\"source\":\"ch_appcenter__chsub_9patch\",\"version\":\""
@@ -133,7 +134,7 @@ object AntOrchardRpcCall {
         )
     }
 
-    suspend fun finishTask(userId: String, sceneCode: String, taskType: String): Result<JsonObject> {
+    suspend fun finishTask(userId: String, sceneCode: String, taskType: String): Result<JSONObject> {
         return request(
             "com.alipay.antiep.finishTask",
             "[{\"outBizNo\":\"" + userId + System.currentTimeMillis()
@@ -144,7 +145,7 @@ object AntOrchardRpcCall {
         )
     }
 
-    suspend fun triggerTbTask(taskId: String, taskPlantType: String): Result<JsonObject> {
+    suspend fun triggerTbTask(taskId: String, taskPlantType: String): Result<JSONObject> {
         return request(
             "com.alipay.antfarm.triggerTbTask",
             "[{\"requestType\":\"NORMAL\",\"sceneCode\":\"ORCHARD\",\"source\":\"ch_appcenter__chsub_9patch\",\"taskId\":\""
@@ -153,7 +154,7 @@ object AntOrchardRpcCall {
         )
     }
 
-    suspend fun orchardSelectSeed(): Result<JsonObject> {
+    suspend fun orchardSelectSeed(): Result<JSONObject> {
         return request(
             "com.alipay.antfarm.orchardSelectSeed",
             "[{\"requestType\":\"NORMAL\",\"sceneCode\":\"ORCHARD\",\"seedCode\":\"rp\",\"source\":\"ch_appcenter__chsub_9patch\",\"version\":\""
@@ -162,7 +163,7 @@ object AntOrchardRpcCall {
     }
 
     /* 砸金蛋 */
-    suspend fun queryGameCenter(): Result<JsonObject> {
+    suspend fun queryGameCenter(): Result<JSONObject> {
         return request(
             "com.alipay.antorchard.queryGameCenter",
             "[{\"requestType\":\"NORMAL\",\"sceneCode\":\"ORCHARD\",\"source\":\"ch_appcenter__chsub_9patch\",\"version\":\""
@@ -170,7 +171,7 @@ object AntOrchardRpcCall {
         )
     }
 
-    suspend fun noticeGame(appId: String): Result<JsonObject> {
+    suspend fun noticeGame(appId: String): Result<JSONObject> {
         return request(
             "com.alipay.antorchard.noticeGame",
             "[{\"appId\":\"" + appId
@@ -179,7 +180,7 @@ object AntOrchardRpcCall {
         )
     }
 
-    suspend fun submitUserAction(gameId: String): Result<JsonObject> {
+    suspend fun submitUserAction(gameId: String): Result<JSONObject> {
         return request(
             "com.alipay.gamecenteruprod.biz.rpc.v3.submitUserAction",
             "[{\"actionCode\":\"enterGame\",\"gameId\":\"" + gameId
@@ -187,7 +188,7 @@ object AntOrchardRpcCall {
         )
     }
 
-    suspend fun submitUserPlayDurationAction(gameAppId: String, source: String): Result<JsonObject> {
+    suspend fun submitUserPlayDurationAction(gameAppId: String, source: String): Result<JSONObject> {
         return request(
             "com.alipay.gamecenteruprod.biz.rpc.v3.submitUserPlayDurationAction",
             "[{\"gameAppId\":\"" + gameAppId + "\",\"playTime\":32,\"source\":\"" + source
@@ -195,7 +196,7 @@ object AntOrchardRpcCall {
         )
     }
 
-    suspend fun smashedGoldenEgg(): Result<JsonObject> {
+    suspend fun smashedGoldenEgg(): Result<JSONObject> {
         return request(
             "com.alipay.antorchard.smashedGoldenEgg",
             "[{\"requestType\":\"NORMAL\",\"seneCode\":\"ORCHARD\",\"source\":\"ch_appcenter__chsub_9patch\",\"version\":\""

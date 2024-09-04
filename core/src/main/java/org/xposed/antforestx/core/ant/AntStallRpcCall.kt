@@ -2,6 +2,7 @@ package org.xposed.antforestx.core.ant
 
 import kotlinx.serialization.json.JsonObject
 import org.json.JSONArray
+import org.json.JSONObject
 import org.xposed.antforestx.core.ant.RpcUtil.request
 import java.util.UUID
 
@@ -12,7 +13,7 @@ import java.util.UUID
 object AntStallRpcCall {
     private const val VERSION = "0.1.2312271038.27"
 
-    suspend fun home(): Result<JsonObject> {
+    suspend fun home(): Result<JSONObject> {
         return request(
             "com.alipay.antstall.self.home",
             "[{\"arouseAppParams\":{},\"source\":\"ch_appcenter__chsub_9patch\",\"systemType\":\"android\",\"version\":\"" +
@@ -20,7 +21,7 @@ object AntStallRpcCall {
         )
     }
 
-    suspend fun settle(assetId: String, settleCoin: Int): Result<JsonObject> {
+    suspend fun settle(assetId: String, settleCoin: Int): Result<JSONObject> {
         return request(
             "com.alipay.antstall.self.settle",
             "[{\"assetId\":\"" + assetId + "\",\"coinType\":\"MASTER\",\"settleCoin\":" + settleCoin +
@@ -29,7 +30,7 @@ object AntStallRpcCall {
         )
     }
 
-    suspend fun shopList(): Result<JsonObject> {
+    suspend fun shopList(): Result<JSONObject> {
         return request(
             "com.alipay.antstall.shop.list",
             "[{\"freeTop\":false,\"source\":\"ch_appcenter__chsub_9patch\",\"systemType\":\"android\",\"version\":\"" +
@@ -37,7 +38,7 @@ object AntStallRpcCall {
         )
     }
 
-    suspend fun preOneKeyClose(): Result<JsonObject> {
+    suspend fun preOneKeyClose(): Result<JSONObject> {
         return request(
             "com.alipay.antstall.user.shop.close.preOneKey",
             "[{\"source\":\"ch_appcenter__chsub_9patch\",\"systemType\":\"android\",\"version\":\""
@@ -45,7 +46,7 @@ object AntStallRpcCall {
         )
     }
 
-    suspend fun oneKeyClose(): Result<JsonObject> {
+    suspend fun oneKeyClose(): Result<JSONObject> {
         return request(
             "com.alipay.antstall.user.shop.oneKeyClose",
             "[{\"source\":\"ch_appcenter__chsub_9patch\",\"systemType\":\"android\",\"version\":\""
@@ -53,7 +54,7 @@ object AntStallRpcCall {
         )
     }
 
-    suspend fun preShopClose(shopId: String, billNo: String): Result<JsonObject> {
+    suspend fun preShopClose(shopId: String, billNo: String): Result<JSONObject> {
         return request(
             "com.alipay.antstall.user.shop.close.pre",
             "[{\"billNo\":\"" + billNo + "\",\"shopId\":\"" + shopId +
@@ -61,14 +62,14 @@ object AntStallRpcCall {
         )
     }
 
-    suspend fun shopClose(shopId: String): Result<JsonObject> {
+    suspend fun shopClose(shopId: String): Result<JSONObject> {
         return request(
             "com.alipay.antstall.user.shop.close",
             "[{\"shopId\":\"" + shopId + "\",\"source\":\"ch_appcenter__chsub_9patch\",\"systemType\":\"android\",\"version\":\"" + VERSION + "\"}]"
         )
     }
 
-    suspend fun oneKeyOpen(): Result<JsonObject> {
+    suspend fun oneKeyOpen(): Result<JSONObject> {
         return request(
             "com.alipay.antstall.user.shop.oneKeyOpen",
             "[{\"source\":\"ch_appcenter__chsub_9patch\",\"systemType\":\"android\",\"version\":\""
@@ -76,7 +77,7 @@ object AntStallRpcCall {
         )
     }
 
-    suspend fun shopOpen(friendSeatId: String, friendUserId: String, shopId: String): Result<JsonObject> {
+    suspend fun shopOpen(friendSeatId: String, friendUserId: String, shopId: String): Result<JSONObject> {
         return request(
             "com.alipay.antstall.user.shop.open",
             "[{\"friendSeatId\":\"" + friendSeatId + "\",\"friendUserId\":\"" + friendUserId + "\",\"shopId\":\"" +
@@ -84,14 +85,14 @@ object AntStallRpcCall {
         )
     }
 
-    suspend fun rankCoinDonate(): Result<JsonObject> {
+    suspend fun rankCoinDonate(): Result<JSONObject> {
         return request(
             "com.alipay.antstall.rank.coin.donate",
             "[{\"source\":\"ANTFARM\",\"systemType\":\"android\",\"version\":\"" + VERSION + "\"}]"
         )
     }
 
-    suspend fun friendHome(userId: String): Result<JsonObject> {
+    suspend fun friendHome(userId: String): Result<JSONObject> {
         return request(
             "com.alipay.antstall.friend.home",
             "[{\"arouseAppParams\":{},\"friendUserId\":\"" + userId +
@@ -100,7 +101,7 @@ object AntStallRpcCall {
     }
 
 
-    suspend fun taskList(): Result<JsonObject> {
+    suspend fun taskList(): Result<JSONObject> {
         return request(
             "com.alipay.antstall.task.list",
             "[{\"source\":\"ch_appcenter__chsub_9patch\",\"systemType\":\"android\",\"version\":\"" +
@@ -108,7 +109,7 @@ object AntStallRpcCall {
         )
     }
 
-    suspend fun signToday(): Result<JsonObject> {
+    suspend fun signToday(): Result<JSONObject> {
         return request(
             "com.alipay.antstall.sign.today",
             "[{\"source\":\"ch_appcenter__chsub_9patch\",\"systemType\":\"android\",\"version\":\"" +
@@ -116,7 +117,7 @@ object AntStallRpcCall {
         )
     }
 
-    suspend fun finishTask(outBizNo: String, taskType: String): Result<JsonObject> {
+    suspend fun finishTask(outBizNo: String, taskType: String): Result<JSONObject> {
         return request(
             "com.alipay.antiep.finishTask",
             "[{\"outBizNo\":\"" + outBizNo +
@@ -125,7 +126,7 @@ object AntStallRpcCall {
         )
     }
 
-    suspend fun receiveTaskAward(taskType: String): Result<JsonObject> {
+    suspend fun receiveTaskAward(taskType: String): Result<JSONObject> {
         return request(
             "com.alipay.antiep.receiveTaskAward",
             "[{\"ignoreLimit\":true,\"requestType\":\"RPC\",\"sceneCode\":\"ANTSTALL_TASK\",\"source\":\"AST\",\"systemType\":\"android\",\"taskType\":\"" +
@@ -133,7 +134,7 @@ object AntStallRpcCall {
         )
     }
 
-    suspend fun taskFinish(taskType: String): Result<JsonObject> {
+    suspend fun taskFinish(taskType: String): Result<JSONObject> {
         return request(
             "com.alipay.antstall.task.finish",
             "[{\"source\":\"ch_appcenter__chsub_9patch\",\"systemType\":\"android\",\"taskType\":\"" + taskType + "\",\"version\":\"" +
@@ -141,7 +142,7 @@ object AntStallRpcCall {
         )
     }
 
-    suspend fun taskAward(amount: String, prizeId: String, taskType: String): Result<JsonObject> {
+    suspend fun taskAward(amount: String, prizeId: String, taskType: String): Result<JSONObject> {
         return request(
             "com.alipay.antstall.task.award",
             "[{\"amount\":" + amount + ",\"prizeId\":\"" + prizeId +
@@ -150,7 +151,7 @@ object AntStallRpcCall {
         )
     }
 
-    suspend fun taskBenefit(): Result<JsonObject> {
+    suspend fun taskBenefit(): Result<JSONObject> {
         return request(
             "com.alipay.antstall.task.benefit",
             "[{\"source\":\"ch_appcenter__chsub_9patch\",\"systemType\":\"android\",\"version\":\"" +
@@ -158,7 +159,7 @@ object AntStallRpcCall {
         )
     }
 
-    suspend fun collectManure(): Result<JsonObject> {
+    suspend fun collectManure(): Result<JSONObject> {
         return request(
             "com.alipay.antstall.manure.collectManure",
             "[{\"source\":\"ch_appcenter__chsub_9patch\",\"systemType\":\"android\",\"version\":\"" +
@@ -166,7 +167,7 @@ object AntStallRpcCall {
         )
     }
 
-    suspend fun queryManureInfo(): Result<JsonObject> {
+    suspend fun queryManureInfo(): Result<JSONObject> {
         return request(
             "com.alipay.antstall.manure.queryManureInfo",
             "[{\"queryManureType\":\"ANTSTALL\",\"source\":\"ch_appcenter__chsub_9patch\",\"systemType\":\"android\",\"version\":\"" +
@@ -174,14 +175,14 @@ object AntStallRpcCall {
         )
     }
 
-    suspend fun projectList(): Result<JsonObject> {
+    suspend fun projectList(): Result<JSONObject> {
         return request(
             "com.alipay.antstall.project.list",
             "[{\"source\":\"ch_appcenter__chsub_9patch\",\"systemType\":\"android\",\"version\":\"" + VERSION + "\"}]"
         )
     }
 
-    suspend fun projectDetail(projectId: String): Result<JsonObject> {
+    suspend fun projectDetail(projectId: String): Result<JSONObject> {
         return request(
             "com.alipay.antstall.project.detail",
             "[{\"projectId\":\"" + projectId +
@@ -189,7 +190,7 @@ object AntStallRpcCall {
         )
     }
 
-    suspend fun projectDonate(projectId: String): Result<JsonObject> {
+    suspend fun projectDonate(projectId: String): Result<JSONObject> {
         return request(
             "com.alipay.antstall.project.donate",
             "[{\"bizNo\":\"" + UUID.randomUUID().toString() + "\",\"projectId\":\"" + projectId +
@@ -197,21 +198,21 @@ object AntStallRpcCall {
         )
     }
 
-    suspend fun roadmap(): Result<JsonObject> {
+    suspend fun roadmap(): Result<JSONObject> {
         return request(
             "com.alipay.antstall.village.roadmap",
             "[{\"source\":\"ch_appcenter__chsub_9patch\",\"systemType\":\"android\",\"version\":\"" + VERSION + "\"}]"
         )
     }
 
-    suspend fun nextVillage(): Result<JsonObject> {
+    suspend fun nextVillage(): Result<JSONObject> {
         return request(
             "com.alipay.antstall.user.ast.next.village",
             "[{\"source\":\"ch_appcenter__chsub_9patch\",\"systemType\":\"android\",\"version\":\"" + VERSION + "\"}]"
         )
     }
 
-    suspend fun rankInviteRegister(): Result<JsonObject> {
+    suspend fun rankInviteRegister(): Result<JSONObject> {
         return request(
             "com.alipay.antstall.rank.invite.register",
             "[{\"source\":\"ch_appcenter__chsub_9patch\",\"systemType\":\"android\",\"version\":\""
@@ -219,7 +220,7 @@ object AntStallRpcCall {
         )
     }
 
-    suspend fun friendInviteRegister(friendUserId: String): Result<JsonObject> {
+    suspend fun friendInviteRegister(friendUserId: String): Result<JSONObject> {
         return request(
             "com.alipay.antstall.friend.invite.register",
             "[{\"friendUserId\":\"" + friendUserId
@@ -229,7 +230,7 @@ object AntStallRpcCall {
     }
 
     /* 助力好友 */
-    suspend fun shareP2P(): Result<JsonObject> {
+    suspend fun shareP2P(): Result<JSONObject> {
         return request(
             "com.alipay.antiep.shareP2P",
             "[{\"requestType\":\"RPC\",\"sceneCode\":\"ANTSTALL_P2P_SHARER\",\"source\":\"ANTSTALL\",\"systemType\":\"android\",\"version\":\""
@@ -237,7 +238,7 @@ object AntStallRpcCall {
         )
     }
 
-    suspend fun achieveBeShareP2P(shareId: String): Result<JsonObject> {
+    suspend fun achieveBeShareP2P(shareId: String): Result<JSONObject> {
         return request(
             "com.alipay.antiep.achieveBeShareP2P",
             "[{\"requestType\":\"RPC\",\"sceneCode\":\"ANTSTALL_P2P_SHARER\",\"shareId\":\""
@@ -247,7 +248,7 @@ object AntStallRpcCall {
         )
     }
 
-    suspend fun shopSendBackPre(billNo: String, seatId: String, shopId: String, shopUserId: String): Result<JsonObject> {
+    suspend fun shopSendBackPre(billNo: String, seatId: String, shopId: String, shopUserId: String): Result<JSONObject> {
         return request(
             "com.alipay.antstall.friend.shop.sendback.pre",
             "[{\"billNo\":\"" + billNo + "\",\"seatId\":\"" + seatId + "\",\"shopId\":\"" + shopId
@@ -257,7 +258,7 @@ object AntStallRpcCall {
         )
     }
 
-    suspend fun shopSendBack(seatId: String): Result<JsonObject> {
+    suspend fun shopSendBack(seatId: String): Result<JSONObject> {
         return request(
             "com.alipay.antstall.friend.shop.sendback",
             "[{\"seatId\":\"" + seatId
@@ -266,7 +267,7 @@ object AntStallRpcCall {
         )
     }
 
-    suspend fun rankInviteOpen(): Result<JsonObject> {
+    suspend fun rankInviteOpen(): Result<JSONObject> {
         return request(
             "com.alipay.antstall.rank.invite.open",
             "[{\"source\":\"ch_appcenter__chsub_9patch\",\"systemType\":\"android\",\"version\":\""
@@ -274,7 +275,7 @@ object AntStallRpcCall {
         )
     }
 
-    suspend fun oneKeyInviteOpenShop(friendUserId: String, mySeatId: String): Result<JsonObject> {
+    suspend fun oneKeyInviteOpenShop(friendUserId: String, mySeatId: String): Result<JSONObject> {
         return request(
             "com.alipay.antstall.user.shop.oneKeyInviteOpenShop",
             "[{\"friendUserId\":\"" + friendUserId + "\",\"mySeatId\":\"" + mySeatId
@@ -283,14 +284,14 @@ object AntStallRpcCall {
         )
     }
 
-    suspend fun dynamicLoss(): Result<JsonObject> {
+    suspend fun dynamicLoss(): Result<JSONObject> {
         return request(
             "com.alipay.antstall.dynamic.loss",
             "[{\"source\":\"ch_appcenter__chsub_9patch\",\"systemType\":\"android\",\"version\":\"" + VERSION + "\"}]"
         )
     }
 
-    suspend fun throwManure(dynamicList: JSONArray): Result<JsonObject> {
+    suspend fun throwManure(dynamicList: JSONArray): Result<JSONObject> {
         return request(
             "com.alipay.antstall.manure.throwManure",
             "[{\"dynamicList\":" + dynamicList
@@ -299,7 +300,7 @@ object AntStallRpcCall {
         )
     }
 
-    suspend fun settleReceivable(): Result<JsonObject> {
+    suspend fun settleReceivable(): Result<JSONObject> {
         return request(
             "com.alipay.antstall.self.settle.receivable",
             "[{\"source\":\"ch_appcenter__chsub_9patch\",\"systemType\":\"android\",\"version\":\""

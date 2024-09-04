@@ -1,6 +1,7 @@
 package org.xposed.antforestx.core.ant
 
 import kotlinx.serialization.json.JsonObject
+import org.json.JSONObject
 import org.xposed.antforestx.core.ant.RpcUtil.request
 
 object AntSportsRpcCall {
@@ -11,7 +12,7 @@ object AntSportsRpcCall {
     private const val cityCode = "330100"
     private const val appId = "2021002116659397"
 
-    suspend fun queryCoinBubbleModule(): Result<JsonObject> {
+    suspend fun queryCoinBubbleModule(): Result<JSONObject> {
         return request(
             "com.alipay.sportshealth.biz.rpc.sportsHealthHomeRpc.queryCoinBubbleModule",
             "[{\"bubbleId\":\"\",\"canAddHome\":false,\"chInfo\":\"" + chInfo
@@ -19,7 +20,7 @@ object AntSportsRpcCall {
         )
     }
 
-    suspend fun receiveCoinAsset(assetId: String, coinAmount: Int): Result<JsonObject> {
+    suspend fun receiveCoinAsset(assetId: String, coinAmount: Int): Result<JSONObject> {
         return request(
             "com.alipay.sportshealth.biz.rpc.SportsHealthCoinCenterRpc.receiveCoinAsset",
             "[{\"assetId\":\"" + assetId
@@ -30,7 +31,7 @@ object AntSportsRpcCall {
         )
     }
 
-    suspend fun queryMyHomePage(): Result<JsonObject> {
+    suspend fun queryMyHomePage(): Result<JSONObject> {
         return request(
             "alipay.antsports.walk.map.queryMyHomePage", "[{\"alipayAppVersion\":\""
                     + alipayAppVersion + "\",\"chInfo\":\"" + chInfo
@@ -39,7 +40,7 @@ object AntSportsRpcCall {
         )
     }
 
-    suspend fun join(pathId: String): Result<JsonObject> {
+    suspend fun join(pathId: String): Result<JSONObject> {
         return request(
             "alipay.antsports.walk.map.join", "[{\"chInfo\":\"" + chInfo
                     + "\",\"clientOS\":\"android\",\"features\":[\"DAILY_STEPS_RANK_V2\",\"STEP_BATTLE\",\"CLUB_HOME_CARD\",\"NEW_HOME_PAGE_STATIC\",\"CLOUD_SDK_AUTH\",\"STAY_ON_COMPLETE\",\"EXTRA_TREASURE_BOX\",\"NEW_HOME_PAGE_STATIC\",\"SUPPORT_TAB3\",\"SUPPORT_FLYRABBIT\",\"PROP\",\"PROPV2\",\"ASIAN_GAMES\"],\"pathId\":\""
@@ -47,14 +48,14 @@ object AntSportsRpcCall {
         )
     }
 
-    suspend fun openAndJoinFirst(): Result<JsonObject> {
+    suspend fun openAndJoinFirst(): Result<JSONObject> {
         return request(
             "alipay.antsports.walk.user.openAndJoinFirst", "[{\"chInfo\":\"" + chInfo
                     + "\",\"clientOS\":\"android\",\"features\":[\"DAILY_STEPS_RANK_V2\",\"STEP_BATTLE\",\"CLUB_HOME_CARD\",\"NEW_HOME_PAGE_STATIC\",\"CLOUD_SDK_AUTH\",\"STAY_ON_COMPLETE\",\"EXTRA_TREASURE_BOX\",\"NEW_HOME_PAGE_STATIC\",\"SUPPORT_TAB3\",\"SUPPORT_FLYRABBIT\",\"PROP\",\"PROPV2\",\"ASIAN_GAMES\"]}]"
         )
     }
 
-    suspend fun go(day: String, rankCacheKey: String, stepCount: Int): Result<JsonObject> {
+    suspend fun go(day: String, rankCacheKey: String, stepCount: Int): Result<JSONObject> {
         return request(
             "alipay.antsports.walk.map.go", "[{\"chInfo\":\"" + chInfo
                     + "\",\"clientOS\":\"android\",\"day\":\"" + day
@@ -64,7 +65,7 @@ object AntSportsRpcCall {
         )
     }
 
-    suspend fun openTreasureBox(boxNo: String, userId: String): Result<JsonObject> {
+    suspend fun openTreasureBox(boxNo: String, userId: String): Result<JSONObject> {
         return request(
             "alipay.antsports.walk.treasureBox.openTreasureBox", "[{\"boxNo\":\"" + boxNo
                     + "\",\"chInfo\":\"" + chInfo
@@ -73,14 +74,14 @@ object AntSportsRpcCall {
         )
     }
 
-    suspend fun queryBaseList(): Result<JsonObject> {
+    suspend fun queryBaseList(): Result<JSONObject> {
         return request(
             "alipay.antsports.walk.path.queryBaseList", "[{\"chInfo\":\"" + chInfo
                     + "\",\"clientOS\":\"android\",\"features\":[\"DAILY_STEPS_RANK_V2\",\"STEP_BATTLE\",\"CLUB_HOME_CARD\",\"NEW_HOME_PAGE_STATIC\",\"CLOUD_SDK_AUTH\",\"STAY_ON_COMPLETE\",\"EXTRA_TREASURE_BOX\",\"NEW_HOME_PAGE_STATIC\",\"SUPPORT_TAB3\",\"SUPPORT_FLYRABBIT\",\"PROP\",\"PROPV2\",\"ASIAN_GAMES\"]}]"
         )
     }
 
-    suspend fun queryProjectList(index: Int): Result<JsonObject> {
+    suspend fun queryProjectList(index: Int): Result<JSONObject> {
         return request(
             "alipay.antsports.walk.charity.queryProjectList", "[{\"chInfo\":\"" + chInfo
                     + "\",\"clientOS\":\"android\",\"features\":[\"DAILY_STEPS_RANK_V2\",\"STEP_BATTLE\",\"CLUB_HOME_CARD\",\"NEW_HOME_PAGE_STATIC\",\"CLOUD_SDK_AUTH\",\"STAY_ON_COMPLETE\",\"EXTRA_TREASURE_BOX\",\"NEW_HOME_PAGE_STATIC\",\"SUPPORT_TAB3\",\"SUPPORT_FLYRABBIT\",\"PROP\",\"PROPV2\",\"ASIAN_GAMES\"],\"index\":"
@@ -88,7 +89,7 @@ object AntSportsRpcCall {
         )
     }
 
-    suspend fun donate(donateCharityCoin: Int, projectId: String): Result<JsonObject> {
+    suspend fun donate(donateCharityCoin: Int, projectId: String): Result<JSONObject> {
         return request(
             "alipay.antsports.walk.charity.donate", "[{\"chInfo\":\"" + chInfo
                     + "\",\"clientOS\":\"android\",\"donateCharityCoin\":" + donateCharityCoin
@@ -97,7 +98,7 @@ object AntSportsRpcCall {
         )
     }
 
-    suspend fun queryWalkStep(): Result<JsonObject> {
+    suspend fun queryWalkStep(): Result<JSONObject> {
         return request(
             "alipay.antsports.walk.user.queryWalkStep", "[{\"chInfo\":\"" + chInfo
                     + "\",\"clientOS\":\"android\",\"features\":[\"DAILY_STEPS_RANK_V2\",\"STEP_BATTLE\",\"CLUB_HOME_CARD\",\"NEW_HOME_PAGE_STATIC\",\"CLOUD_SDK_AUTH\",\"STAY_ON_COMPLETE\",\"EXTRA_TREASURE_BOX\",\"NEW_HOME_PAGE_STATIC\",\"SUPPORT_TAB3\",\"SUPPORT_FLYRABBIT\",\"PROP\",\"PROPV2\",\"ASIAN_GAMES\"],\"timeZone\":\""
@@ -105,7 +106,7 @@ object AntSportsRpcCall {
         )
     }
 
-    suspend fun walkDonateSignInfo(count: Int): Result<JsonObject> {
+    suspend fun walkDonateSignInfo(count: Int): Result<JSONObject> {
         return request(
             "alipay.charity.mobile.donate.walk.walkDonateSignInfo",
             "[{\"needDonateAction\":false,\"source\":\"walkDonateHome\",\"steps\":" + count
@@ -114,14 +115,14 @@ object AntSportsRpcCall {
         )
     }
 
-    suspend fun donateWalkHome(count: Int): Result<JsonObject> {
+    suspend fun donateWalkHome(count: Int): Result<JSONObject> {
         return request(
             "alipay.charity.mobile.donate.walk.home",
             "[{\"module\":\"3\",\"steps\":" + count + ",\"timezoneId\":\"" + timeZone + "\"}]"
         )
     }
 
-    suspend fun exchange(actId: String, count: Int, donateToken: String): Result<JsonObject> {
+    suspend fun exchange(actId: String, count: Int, donateToken: String): Result<JSONObject> {
         return request(
             "alipay.charity.mobile.donate.walk.exchange",
             "[{\"actId\":\"" + actId + "\",\"count\":"
@@ -131,21 +132,21 @@ object AntSportsRpcCall {
     }
 
     /* 这个好像没用 */
-    suspend fun exchangeSuccess(exchangeId: String): Result<JsonObject> {
+    suspend fun exchangeSuccess(exchangeId: String): Result<JSONObject> {
         val args1 = ("[{\"exchangeId\":\"" + exchangeId
                 + "\",\"timezone\":\"GMT+08:00\",\"version\":\"" + version + "\"}]")
         return request("alipay.charity.mobile.donate.exchange.success", args1)
     }
 
     /* 文体中心 */
-    suspend fun userTaskGroupQuery(groupId: String): Result<JsonObject> {
+    suspend fun userTaskGroupQuery(groupId: String): Result<JSONObject> {
         return request(
             "alipay.tiyubiz.sports.userTaskGroup.query",
             "[{\"cityCode\":\"" + cityCode + "\",\"groupId\":\"" + groupId + "\"}]"
         )
     }
 
-    suspend fun userTaskComplete(bizType: String, taskId: String): Result<JsonObject> {
+    suspend fun userTaskComplete(bizType: String, taskId: String): Result<JSONObject> {
         return request(
             "alipay.tiyubiz.sports.userTask.complete",
             "[{\"bizType\":\"" + bizType + "\",\"cityCode\":\"" + cityCode + "\",\"completedTime\":"
@@ -153,28 +154,28 @@ object AntSportsRpcCall {
         )
     }
 
-    suspend fun userTaskRightsReceive(taskId: String, userTaskId: String): Result<JsonObject> {
+    suspend fun userTaskRightsReceive(taskId: String, userTaskId: String): Result<JSONObject> {
         return request(
             "alipay.tiyubiz.sports.userTaskRights.receive",
             "[{\"taskId\":\"$taskId\",\"userTaskId\":\"$userTaskId\"}]"
         )
     }
 
-    suspend fun queryAccount(): Result<JsonObject> {
+    suspend fun queryAccount(): Result<JSONObject> {
         return request(
             "alipay.tiyubiz.user.asset.query.account",
             "[{\"accountType\":\"TIYU_SEED\"}]"
         )
     }
 
-    suspend fun queryRoundList(): Result<JsonObject> {
+    suspend fun queryRoundList(): Result<JSONObject> {
         return request(
             "alipay.tiyubiz.wenti.walk.queryRoundList",
             "[{}]"
         )
     }
 
-    suspend fun participate(bettingPoints: Int, InstanceId: String, ResultId: String, roundId: String): Result<JsonObject> {
+    suspend fun participate(bettingPoints: Int, InstanceId: String, ResultId: String, roundId: String): Result<JSONObject> {
         return request(
             "alipay.tiyubiz.wenti.walk.participate",
             "[{\"bettingPoints\":" + bettingPoints + ",\"guessInstanceId\":\"" + InstanceId
@@ -184,7 +185,7 @@ object AntSportsRpcCall {
         )
     }
 
-    suspend fun pathFeatureQuery(): Result<JsonObject> {
+    suspend fun pathFeatureQuery(): Result<JSONObject> {
         return request(
             "alipay.tiyubiz.path.feature.query",
             "[{\"appId\":\"" + appId
@@ -192,21 +193,21 @@ object AntSportsRpcCall {
         )
     }
 
-    suspend fun pathMapJoin(pathId: String): Result<JsonObject> {
+    suspend fun pathMapJoin(pathId: String): Result<JSONObject> {
         return request(
             "alipay.tiyubiz.path.map.join",
             "[{\"appId\":\"" + appId + "\",\"pathId\":\"" + pathId + "\"}]"
         )
     }
 
-    suspend fun pathMapHomepage(pathId: String): Result<JsonObject> {
+    suspend fun pathMapHomepage(pathId: String): Result<JSONObject> {
         return request(
             "alipay.tiyubiz.path.map.homepage",
             "[{\"appId\":\"" + appId + "\",\"pathId\":\"" + pathId + "\"}]"
         )
     }
 
-    suspend fun stepQuery(countDate: String, pathId: String): Result<JsonObject> {
+    suspend fun stepQuery(countDate: String, pathId: String): Result<JSONObject> {
         return request(
             "alipay.tiyubiz.path.map.step.query",
             "[{\"appId\":\"" + appId + "\",\"countDate\":\"" + countDate
@@ -215,7 +216,7 @@ object AntSportsRpcCall {
         )
     }
 
-    suspend fun tiyubizGo(countDate: String, goStepCount: Int, pathId: String, userPathRecordId: String): Result<JsonObject> {
+    suspend fun tiyubizGo(countDate: String, goStepCount: Int, pathId: String, userPathRecordId: String): Result<JSONObject> {
         return request(
             "alipay.tiyubiz.path.map.go",
             "[{\"appId\":\"" + appId + "\",\"countDate\":\"" + countDate
@@ -226,7 +227,7 @@ object AntSportsRpcCall {
         )
     }
 
-    suspend fun rewardReceive(pathId: String, userPathRewardId: String): Result<JsonObject> {
+    suspend fun rewardReceive(pathId: String, userPathRewardId: String): Result<JSONObject> {
         return request(
             "alipay.tiyubiz.path.map.reward.receive",
             "[{\"appId\":\"" + appId + "\",\"pathId\":\"" + pathId + "\",\"userPathRewardId\":\""

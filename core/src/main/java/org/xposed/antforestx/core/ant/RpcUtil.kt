@@ -6,6 +6,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
+import org.json.JSONObject
 import org.xposed.antforestx.core.hooker.H5RpcUtilHooker
 import org.xposed.antforestx.core.util.CoroutineHelper
 import org.xposed.antforestx.core.util.Logger
@@ -40,13 +41,14 @@ object RpcUtil {
         return null
     }
 
-    suspend fun request(protocol: String, params: String): Result<JsonObject> = withContext(Dispatchers.Default) {
+    suspend fun request(protocol: String, params: String): Result<JSONObject> = withContext(Dispatchers.Default) {
         return@withContext runCatching {
             Logger.d("【RpcUtil】request: protocol = %s, params = %s", protocol, params)
             val responseData = H5RpcUtilHooker.invokeRpcCall13(protocol, params)
             Logger.d("【RpcUtil】response: %s", responseData)
-            val jsonObject = Json.decodeFromString<JsonObject>(responseData)
-            val name = jsonObject.getOrDefault("name", "").toString()
+
+            val jsonObject = JSONObject(responseData)
+            val name = jsonObject.optString("name", "")
             if (name.contains("系统繁忙")) {
                 throw Exception("系统繁忙")
             } else {

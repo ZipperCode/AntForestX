@@ -1,6 +1,7 @@
 package org.xposed.antforestx.core.ant
 
 import kotlinx.serialization.json.JsonObject
+import org.json.JSONObject
 import org.xposed.antforestx.core.ant.RpcUtil.request
 import org.xposed.antforestx.core.util.RandomUtils
 import java.security.MessageDigest
@@ -10,7 +11,7 @@ import java.util.UUID
 object AntFarmRpcCall {
     private const val VERSION = "1.8.2302070202.46"
 
-    suspend fun enterFarm(farmId: String, userId: String): Result<JsonObject> {
+    suspend fun enterFarm(farmId: String, userId: String): Result<JSONObject> {
         return request(
             "com.alipay.antfarm.enterFarm",
             "[{\"animalId\":\"\",\"farmId\":\"" + farmId +
@@ -19,25 +20,25 @@ object AntFarmRpcCall {
         )
     }
 
-    suspend fun syncAnimalStatus(farmId: String): Result<JsonObject> {
+    suspend fun syncAnimalStatus(farmId: String): Result<JSONObject> {
         val args1 = ("[{\"farmId\":\"" + farmId +
                 "\",\"operType\":\"FEEDSYNC\",\"queryFoodStockInfo\":false,\"recall\":false,\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"userId\":\""
                 + farmId2UserId(farmId) + "\",\"version\":\"" + VERSION + "\"}]")
         return request("com.alipay.antfarm.syncAnimalStatus", args1)
     }
 
-    suspend fun sleep(): Result<JsonObject> {
+    suspend fun sleep(): Result<JSONObject> {
         val args1 = "[{\"requestType\":\"RPC\",\"sceneCode\":\"ANTFARM\",\"source\":\"LOVECABIN\",\"version\":\"unknown\"}]"
         return request("com.alipay.antfarm.sleep", args1)
     }
 
-    suspend fun queryLoveCabin(userId: String): Result<JsonObject> {
+    suspend fun queryLoveCabin(userId: String): Result<JSONObject> {
         val args1 = "[{\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"ENTERFARM\",\"userId\":\"" +
                 userId + "\",\"version\":\"" + VERSION + "\"}]"
         return request("com.alipay.antfarm.queryLoveCabin", args1)
     }
 
-    suspend fun rewardFriend(consistencyKey: String, friendId: String, productNum: String, time: String): Result<JsonObject> {
+    suspend fun rewardFriend(consistencyKey: String, friendId: String, productNum: String, time: String): Result<JSONObject> {
         val args1 = ("[{\"canMock\":true,\"consistencyKey\":\"" + consistencyKey
                 + "\",\"friendId\":\"" + friendId + "\",\"operType\":\"1\",\"productNum\":" + productNum +
                 ",\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"time\":"
@@ -45,7 +46,7 @@ object AntFarmRpcCall {
         return request("com.alipay.antfarm.rewardFriend", args1)
     }
 
-    suspend fun recallAnimal(animalId: String, currentFarmId: String, masterFarmId: String): Result<JsonObject> {
+    suspend fun recallAnimal(animalId: String, currentFarmId: String, masterFarmId: String): Result<JSONObject> {
         val args1 = ("[{\"animalId\":\"" + animalId + "\",\"currentFarmId\":\""
                 + currentFarmId + "\",\"masterFarmId\":\"" + masterFarmId +
                 "\",\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"version\":\""
@@ -53,13 +54,13 @@ object AntFarmRpcCall {
         return request("com.alipay.antfarm.recallAnimal", args1)
     }
 
-    suspend fun orchardRecallAnimal(animalId: String, userId: String): Result<JsonObject> {
+    suspend fun orchardRecallAnimal(animalId: String, userId: String): Result<JSONObject> {
         val args1 = "[{\"animalId\":\"" + animalId + "\",\"orchardUserId\":\"" + userId +
                 "\",\"requestType\":\"NORMAL\",\"sceneCode\":\"ORCHARD\",\"source\":\"zhuangyuan_zhaohuixiaoji\",\"version\":\"0.1.2403061630.6\"}]"
         return request("com.alipay.antorchard.recallAnimal", args1)
     }
 
-    suspend fun sendBackAnimal(sendType: String, animalId: String, currentFarmId: String, masterFarmId: String): Result<JsonObject> {
+    suspend fun sendBackAnimal(sendType: String, animalId: String, currentFarmId: String, masterFarmId: String): Result<JSONObject> {
         val args1 = ("[{\"animalId\":\"" + animalId + "\",\"currentFarmId\":\""
                 + currentFarmId + "\",\"masterFarmId\":\"" + masterFarmId +
                 "\",\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"sendType\":\""
@@ -68,33 +69,33 @@ object AntFarmRpcCall {
         return request("com.alipay.antfarm.sendBackAnimal", args1)
     }
 
-    suspend fun harvestProduce(farmId: String): Result<JsonObject> {
+    suspend fun harvestProduce(farmId: String): Result<JSONObject> {
         val args1 = ("[{\"canMock\":true,\"farmId\":\"" + farmId +
                 "\",\"giftType\":\"\",\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"version\":\""
                 + VERSION + "\"}]")
         return request("com.alipay.antfarm.harvestProduce", args1)
     }
 
-    suspend fun listActivityInfo(): Result<JsonObject> {
+    suspend fun listActivityInfo(): Result<JSONObject> {
         val args1 = ("[{\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"version\":\""
                 + VERSION + "\"}]")
         return request("com.alipay.antfarm.listActivityInfo", args1)
     }
 
-    suspend fun donation(activityId: String, donationAmount: Int): Result<JsonObject> {
+    suspend fun donation(activityId: String, donationAmount: Int): Result<JSONObject> {
         val args1 = ("[{\"activityId\":\"" + activityId + "\",\"donationAmount\":" + donationAmount +
                 ",\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"version\":\""
                 + VERSION + "\"}]")
         return request("com.alipay.antfarm.donation", args1)
     }
 
-    suspend fun listFarmTask(): Result<JsonObject> {
+    suspend fun listFarmTask(): Result<JSONObject> {
         val args1 = ("[{\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"version\":\""
                 + VERSION + "\"}]")
         return request("com.alipay.antfarm.listFarmTask", args1)
     }
 
-    suspend fun getAnswerInfo(): Result<JsonObject> {
+    suspend fun getAnswerInfo(): Result<JSONObject> {
         val args1 =
             ("[{\"answerSource\":\"foodTask\",\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"version\":\""
                     + VERSION + "\"}]")
@@ -102,59 +103,59 @@ object AntFarmRpcCall {
     }
 
 
-    suspend fun answerQuestion(quesId: String, answer: Int): Result<JsonObject> {
+    suspend fun answerQuestion(quesId: String, answer: Int): Result<JSONObject> {
         val args1 = ("[{\"answers\":\"[{\\\"questionId\\\":\\\"" + quesId + "\\\",\\\"answers\\\":[" + answer +
                 "]}]\",\"bizkey\":\"ANSWER\",\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"version\":\""
                 + VERSION + "\"}]")
         return request("com.alipay.antfarm.doFarmTask", args1)
     }
 
-    suspend fun receiveFarmTaskAward(taskId: String): Result<JsonObject> {
+    suspend fun receiveFarmTaskAward(taskId: String): Result<JSONObject> {
         val args1 = ("[{\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"taskId\":\""
                 + taskId + "\",\"version\":\"" + VERSION + "\"}]")
         return request("com.alipay.antfarm.receiveFarmTaskAward", args1)
     }
 
-    suspend fun listToolTaskDetails(): Result<JsonObject> {
+    suspend fun listToolTaskDetails(): Result<JSONObject> {
         val args1 = ("[{\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"version\":\""
                 + VERSION + "\"}]")
         return request("com.alipay.antfarm.listToolTaskDetails", args1)
     }
 
-    suspend fun receiveToolTaskReward(rewardType: String, rewardCount: Int, taskType: String): Result<JsonObject> {
+    suspend fun receiveToolTaskReward(rewardType: String, rewardCount: Int, taskType: String): Result<JSONObject> {
         val args1 = ("[{\"ignoreLimit\":false,\"requestType\":\"NORMAL\",\"rewardCount\":" + rewardCount
                 + ",\"rewardType\":\"" + rewardType + "\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"taskType\":\""
                 + taskType + "\",\"version\":\"" + VERSION + "\"}]")
         return request("com.alipay.antfarm.receiveToolTaskReward", args1)
     }
 
-    suspend fun feedAnimal(farmId: String): Result<JsonObject> {
+    suspend fun feedAnimal(farmId: String): Result<JSONObject> {
         val args1 = ("[{\"animalType\":\"CHICK\",\"canMock\":true,\"farmId\":\"" + farmId +
                 "\",\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"version\":\""
                 + VERSION + "\"}]")
         return request("com.alipay.antfarm.feedAnimal", args1)
     }
 
-    suspend fun listFarmTool(): Result<JsonObject> {
+    suspend fun listFarmTool(): Result<JSONObject> {
         val args1 = ("[{\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"version\":\""
                 + VERSION + "\"}]")
         return request("com.alipay.antfarm.listFarmTool", args1)
     }
 
-    suspend fun useFarmTool(targetFarmId: String, toolId: String, toolType: String): Result<JsonObject> {
+    suspend fun useFarmTool(targetFarmId: String, toolId: String, toolType: String): Result<JSONObject> {
         val args1 = ("[{\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"targetFarmId\":\""
                 + targetFarmId + "\",\"toolId\":\"" + toolId + "\",\"toolType\":\"" + toolType + "\",\"version\":\""
                 + VERSION + "\"}]")
         return request("com.alipay.antfarm.useFarmTool", args1)
     }
 
-    suspend fun rankingList(pageStartSum: Int): Result<JsonObject> {
+    suspend fun rankingList(pageStartSum: Int): Result<JSONObject> {
         val args1 = ("[{\"pageSize\":20,\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"startNum\":"
                 + pageStartSum + ",\"version\":\"" + VERSION + "\"}]")
         return request("com.alipay.antfarm.rankingList", args1)
     }
 
-    suspend fun notifyFriend(animalId: String, notifiedFarmId: String): Result<JsonObject> {
+    suspend fun notifyFriend(animalId: String, notifiedFarmId: String): Result<JSONObject> {
         val args1 = ("[{\"animalId\":\"" + animalId +
                 "\",\"animalType\":\"CHICK\",\"canBeGuest\":true,\"notifiedFarmId\":\"" + notifiedFarmId +
                 "\",\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"version\":\""
@@ -162,7 +163,7 @@ object AntFarmRpcCall {
         return request("com.alipay.antfarm.notifyFriend", args1)
     }
 
-    suspend fun feedFriendAnimal(friendFarmId: String): Result<JsonObject> {
+    suspend fun feedFriendAnimal(friendFarmId: String): Result<JSONObject> {
         val args1 = ("[{\"animalType\":\"CHICK\",\"canMock\":true,\"friendFarmId\":\"" + friendFarmId +
                 "\",\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"version\":\""
                 + VERSION + "\"}]")
@@ -174,7 +175,7 @@ object AntFarmRpcCall {
         return farmId.substring(l)
     }
 
-    suspend fun collectManurePot(manurePotNO: String): Result<JsonObject> {
+    suspend fun collectManurePot(manurePotNO: String): Result<JSONObject> {
         return request(
             "com.alipay.antfarm.collectManurePot", "[{\"manurePotNOs\":\"" + manurePotNO +
                     "\",\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"version\":\"" + VERSION
@@ -182,7 +183,7 @@ object AntFarmRpcCall {
         )
     }
 
-    suspend fun sign(): Result<JsonObject> {
+    suspend fun sign(): Result<JSONObject> {
         return request(
             "com.alipay.antfarm.sign",
             "[{\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"version\":\"" + VERSION
@@ -190,7 +191,7 @@ object AntFarmRpcCall {
         )
     }
 
-    suspend fun initFarmGame(gameType: String): Result<JsonObject> {
+    suspend fun initFarmGame(gameType: String): Result<JSONObject> {
         if ("flyGame" == gameType) {
             return request(
                 "com.alipay.antfarm.initFarmGame",
@@ -219,7 +220,7 @@ object AntFarmRpcCall {
         }
     }
 
-    suspend fun recordFarmGame(gameType: String): Result<JsonObject> {
+    suspend fun recordFarmGame(gameType: String): Result<JSONObject> {
         val uuid = uuid
         val md5String = getMD5(uuid)
         val score = RandomScore(gameType)
@@ -277,7 +278,7 @@ object AntFarmRpcCall {
     }
 
     /* 小鸡厨房 */
-    suspend fun enterKitchen(userId: String): Result<JsonObject> {
+    suspend fun enterKitchen(userId: String): Result<JSONObject> {
         return request(
             "com.alipay.antfarm.enterKitchen",
             "[{\"requestType\":\"RPC\",\"sceneCode\":\"ANTFARM\",\"source\":\"antfarmzuofanrw\",\"userId\":\""
@@ -285,7 +286,7 @@ object AntFarmRpcCall {
         )
     }
 
-    suspend fun collectDailyFoodMaterial(dailyFoodMaterialAmount: Int): Result<JsonObject> {
+    suspend fun collectDailyFoodMaterial(dailyFoodMaterialAmount: Int): Result<JSONObject> {
         return request(
             "com.alipay.antfarm.collectDailyFoodMaterial",
             "[{\"collectDailyFoodMaterialAmount\":" + dailyFoodMaterialAmount
@@ -293,14 +294,14 @@ object AntFarmRpcCall {
         )
     }
 
-    suspend fun queryFoodMaterialPack(): Result<JsonObject> {
+    suspend fun queryFoodMaterialPack(): Result<JSONObject> {
         return request(
             "com.alipay.antfarm.queryFoodMaterialPack",
             "[{\"requestType\":\"RPC\",\"sceneCode\":\"ANTFARM\",\"source\":\"kitchen\",\"version\":\"unknown\"}]"
         )
     }
 
-    suspend fun collectDailyLimitedFoodMaterial(dailyLimitedFoodMaterialAmount: Int): Result<JsonObject> {
+    suspend fun collectDailyLimitedFoodMaterial(dailyLimitedFoodMaterialAmount: Int): Result<JSONObject> {
         return request(
             "com.alipay.antfarm.collectDailyLimitedFoodMaterial",
             "[{\"collectDailyLimitedFoodMaterialAmount\":" + dailyLimitedFoodMaterialAmount
@@ -308,14 +309,14 @@ object AntFarmRpcCall {
         )
     }
 
-    suspend fun farmFoodMaterialCollect(): Result<JsonObject> {
+    suspend fun farmFoodMaterialCollect(): Result<JSONObject> {
         return request(
             "com.alipay.antorchard.farmFoodMaterialCollect",
             "[{\"collect\":true,\"requestType\":\"RPC\",\"sceneCode\":\"ORCHARD\",\"source\":\"VILLA\",\"version\":\"unknown\"}]"
         )
     }
 
-    suspend fun cook(userId: String): Result<JsonObject> {
+    suspend fun cook(userId: String): Result<JSONObject> {
         return request(
             "com.alipay.antfarm.cook",
             "[{\"requestType\":\"RPC\",\"sceneCode\":\"ANTFARM\",\"source\":\"antfarmzuofanrw\",\"userId\":\""
@@ -323,7 +324,7 @@ object AntFarmRpcCall {
         )
     }
 
-    suspend fun useFarmFood(cookbookId: String, cuisineId: String): Result<JsonObject> {
+    suspend fun useFarmFood(cookbookId: String, cuisineId: String): Result<JSONObject> {
         return request(
             "com.alipay.antfarm.useFarmFood",
             "[{\"cookbookId\":\"" + cookbookId + "\",\"cuisineId\":\"" + cuisineId
@@ -332,7 +333,7 @@ object AntFarmRpcCall {
         )
     }
 
-    suspend fun collectKitchenGarbage(): Result<JsonObject> {
+    suspend fun collectKitchenGarbage(): Result<JSONObject> {
         return request(
             "com.alipay.antfarm.collectKitchenGarbage",
             "[{\"requestType\":\"RPC\",\"sceneCode\":\"ANTFARM\",\"source\":\"VILLA\",\"version\":\"unknown\"}]"
@@ -340,7 +341,7 @@ object AntFarmRpcCall {
     }
 
     /* 日常任务 */
-    suspend fun doFarmTask(bizKey: String): Result<JsonObject> {
+    suspend fun doFarmTask(bizKey: String): Result<JSONObject> {
         return request(
             "com.alipay.antfarm.doFarmTask",
             "[{\"bizKey\":\"" + bizKey
@@ -349,7 +350,7 @@ object AntFarmRpcCall {
         )
     }
 
-    suspend fun queryTabVideoUrl(): Result<JsonObject> {
+    suspend fun queryTabVideoUrl(): Result<JSONObject> {
         return request(
             "com.alipay.antfarm.queryTabVideoUrl",
             "[{\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"version\":\"" + VERSION
@@ -357,7 +358,7 @@ object AntFarmRpcCall {
         )
     }
 
-    suspend fun videoDeliverModule(bizId: String): Result<JsonObject> {
+    suspend fun videoDeliverModule(bizId: String): Result<JSONObject> {
         return request(
             "alipay.content.reading.life.deliver.module",
             "[{\"bizId\":\"" + bizId
@@ -366,7 +367,7 @@ object AntFarmRpcCall {
         )
     }
 
-    suspend fun videoTrigger(bizId: String): Result<JsonObject> {
+    suspend fun videoTrigger(bizId: String): Result<JSONObject> {
         return request(
             "alipay.content.reading.life.prize.trigger",
             "[{\"bizId\":\"" + bizId
@@ -375,7 +376,7 @@ object AntFarmRpcCall {
     }
 
     /* 惊喜礼包 */
-    suspend fun drawLotteryPlus(): Result<JsonObject> {
+    suspend fun drawLotteryPlus(): Result<JSONObject> {
         return request(
             "com.alipay.antfarm.drawLotteryPlus",
             "[{\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5 \",\"version\":\"\"}]"
@@ -383,7 +384,7 @@ object AntFarmRpcCall {
     }
 
     /* 小麦 */
-    suspend fun acceptGift(): Result<JsonObject> {
+    suspend fun acceptGift(): Result<JSONObject> {
         return request(
             "com.alipay.antfarm.acceptGift",
             "[{\"ignoreLimit\":false,\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"version\":\""
@@ -391,7 +392,7 @@ object AntFarmRpcCall {
         )
     }
 
-    suspend fun visitFriend(friendFarmId: String): Result<JsonObject> {
+    suspend fun visitFriend(friendFarmId: String): Result<JSONObject> {
         return request(
             "com.alipay.antfarm.visitFriend",
             "[{\"friendFarmId\":\"" + friendFarmId
@@ -401,14 +402,14 @@ object AntFarmRpcCall {
     }
 
     /* 小鸡日记 */
-    suspend fun queryChickenDiaryList(): Result<JsonObject> {
+    suspend fun queryChickenDiaryList(): Result<JSONObject> {
         return request(
             "com.alipay.antfarm.queryChickenDiaryList",
             "[{\"requestType\":\"NORMAL\",\"sceneCode\":\"DIARY\",\"source\":\"antfarm_icon\"}]"
         )
     }
 
-    suspend fun queryChickenDiary(queryDayStr: String): Result<JsonObject> {
+    suspend fun queryChickenDiary(queryDayStr: String): Result<JSONObject> {
         return request(
             "com.alipay.antfarm.queryChickenDiary",
             "[{\"queryDayStr\":\"" + queryDayStr
@@ -416,7 +417,7 @@ object AntFarmRpcCall {
         )
     }
 
-    suspend fun diaryTietie(diaryDate: String, roleId: String): Result<JsonObject> {
+    suspend fun diaryTietie(diaryDate: String, roleId: String): Result<JSONObject> {
         return request(
             "com.alipay.antfarm.diaryTietie",
             "[{\"diaryDate\":\"" + diaryDate + "\",\"requestType\":\"NORMAL\",\"roleId\":\"" + roleId
@@ -424,7 +425,7 @@ object AntFarmRpcCall {
         )
     }
 
-    suspend fun visitAnimal(): Result<JsonObject> {
+    suspend fun visitAnimal(): Result<JSONObject> {
         return request(
             "com.alipay.antfarm.visitAnimal",
             "[{\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"version\":\"" + VERSION +
@@ -432,7 +433,7 @@ object AntFarmRpcCall {
         )
     }
 
-    suspend fun feedFriendAnimalVisit(friendFarmId: String): Result<JsonObject> {
+    suspend fun feedFriendAnimalVisit(friendFarmId: String): Result<JSONObject> {
         return request(
             "com.alipay.antfarm.feedFriendAnimal",
             "[{\"friendFarmId\":\"" + friendFarmId + "\",\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\"," +
@@ -440,7 +441,7 @@ object AntFarmRpcCall {
         )
     }
 
-    suspend fun visitAnimalSendPrize(token: String): Result<JsonObject> {
+    suspend fun visitAnimalSendPrize(token: String): Result<JSONObject> {
         return request(
             "com.alipay.antfarm.visitAnimalSendPrize",
             "[{\"requestType\":\"NORMAL\",\"sceneCode\":\"ANTFARM\",\"source\":\"H5\",\"token\":\"" + token +

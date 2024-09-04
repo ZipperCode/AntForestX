@@ -29,7 +29,7 @@ import kotlinx.serialization.Serializable
  * @param isCooperateWater 是否合种浇水
  * @param cooperateWaterList 合种浇水好友列表
  * @param cooperateWaterLimit 合种浇水限制
- * @param isProtectAncientTree 是否收集古树
+ * @param enableProtectAncientTree 是否收集古树
  * @param ancientTreeCityCodeList 古树城市列表
  * @param ancientTreeOnlyWeek 是否只收集本周古树
  * @param isCollectEnergyRain 是否收集能量雨
@@ -73,7 +73,7 @@ data class AntForestConfig(
     val isCooperateWater: Boolean = false,
     val cooperateWaterList: List<String> = emptyList(),
     val cooperateWaterLimit: Int = 0,
-    val isProtectAncientTree: Boolean = false,
+    val enableProtectAncientTree: Boolean = false,
     val ancientTreeCityCodeList: List<String> = emptyList(),
     val ancientTreeOnlyWeek: Boolean = true,
     val isCollectEnergyRain: Boolean = true,

@@ -1,6 +1,7 @@
 package org.xposed.antforestx.core.ant
 
 import kotlinx.serialization.json.JsonObject
+import org.json.JSONObject
 import org.xposed.antforestx.core.ant.RpcUtil.request
 import java.util.UUID
 
@@ -16,14 +17,14 @@ object OmegakoiTownRpcCall {
             return sb.toString()
         }
 
-    suspend fun houseProduct(): Result<JsonObject> {
+    suspend fun houseProduct(): Result<JSONObject> {
         return request(
             "com.alipay.omegakoi.town.v2.house.product",
             "[{\"outBizNo\":\"" + UUID.randomUUID().toString() + "\",\"shouldScoreReward\":true}]"
         )
     }
 
-    suspend fun houseBuild(groundId: String, houseId: String): Result<JsonObject> {
+    suspend fun houseBuild(groundId: String, houseId: String): Result<JSONObject> {
         return request(
             "com.alipay.omegakoi.town.v2.house.build",
             "[{\"groundId\":\"" + groundId + "\",\"houseId\":\"" + houseId
@@ -31,21 +32,21 @@ object OmegakoiTownRpcCall {
         )
     }
 
-    suspend fun getUserScore(): Result<JsonObject> {
+    suspend fun getUserScore(): Result<JSONObject> {
         return request(
             "com.alipay.omegakoi.town.v2.user.getUserScore",
             "[{\"outBizNo\":\"" + UUID.randomUUID().toString() + "\"}]"
         )
     }
 
-    suspend fun getBalloonsReadyToCollect(): Result<JsonObject> {
+    suspend fun getBalloonsReadyToCollect(): Result<JSONObject> {
         return request(
             "com.alipay.omegakoi.town.v2.user.getUserScore",
             "[{\"outBizNo\":\"" + UUID.randomUUID().toString() + "\"}]"
         )
     }
 
-    suspend fun getUserQuests(): Result<JsonObject> {
+    suspend fun getUserQuests(): Result<JSONObject> {
         return request(
             "com.alipay.omegakoi.town.v2.scenario.getUserQuests",
             "[{\"disableQuests\":true,\"outBizNo\":\"" + UUID.randomUUID().toString()
@@ -54,7 +55,7 @@ object OmegakoiTownRpcCall {
     }
 
 
-    suspend fun completeQuest(questId: String, scenarioId: String): Result<JsonObject> {
+    suspend fun completeQuest(questId: String, scenarioId: String): Result<JSONObject> {
         return request(
             "com.alipay.omegakoi.town.v2.scenario.completeQuest",
             "[{\"optionIndex\":0,\"outBizNo\":\"" + UUID.randomUUID().toString() + "\",\"questId\":\"" + questId
@@ -62,14 +63,14 @@ object OmegakoiTownRpcCall {
         )
     }
 
-    suspend fun groundBuy(groundId: String): Result<JsonObject> {
+    suspend fun groundBuy(groundId: String): Result<JSONObject> {
         return request(
             "com.alipay.omegakoi.town.v2.ground.buy",
             "[{\"groundId\":\"" + groundId + "\",\"outBizNo\":\"" + UUID.randomUUID().toString() + "\"}]"
         )
     }
 
-    suspend fun getCurrentBalloonsByTarget(groundId: String?): Result<JsonObject> {
+    suspend fun getCurrentBalloonsByTarget(groundId: String?): Result<JSONObject> {
         return request(
             "com.alipay.omegakoi.town.v2.balloon.getCurrentBalloonsByTarget",
             "[{\"outBizNo\":\"" + UUID.randomUUID().toString() + "\"}]"
@@ -77,14 +78,14 @@ object OmegakoiTownRpcCall {
     }
 
 
-    suspend fun getUserTasks(): Result<JsonObject> {
+    suspend fun getUserTasks(): Result<JSONObject> {
         return request(
             "com.alipay.omegakoi.town.v2.task.getUserTasks",
             "[{\"outBizNo\":\"" + UUID.randomUUID().toString() + "\"}]"
         )
     }
 
-    suspend fun queryAppInfo(app_id: String): Result<JsonObject> {
+    suspend fun queryAppInfo(app_id: String): Result<JSONObject> {
         return request(
             "alipay.mappconfig.queryAppInfo",
             "[{\"baseInfoReq\":{\"appIds\":[\"" + app_id
@@ -94,63 +95,63 @@ object OmegakoiTownRpcCall {
         )
     }
 
-    suspend fun triggerTaskReward(taskId: String): Result<JsonObject> {
+    suspend fun triggerTaskReward(taskId: String): Result<JSONObject> {
         return request(
             "com.alipay.omegakoi.town.v2.task.triggerTaskReward",
             "[{\"outBizNo\":\"" + UUID.randomUUID().toString() + "\",\"taskId\":\"" + taskId + "\"}]"
         )
     }
 
-    suspend fun getShareId(): Result<JsonObject> {
+    suspend fun getShareId(): Result<JSONObject> {
         return request(
             "com.alipay.omegakoi.town.v2.user.getShareId",
             "[{\"outBizNo\":\"" + UUID.randomUUID().toString() + "\"}]"
         )
     }
 
-    suspend fun getfengdieData(): Result<JsonObject> {
+    suspend fun getfengdieData(): Result<JSONObject> {
         return request(
             "com.alipay.omegakoi.town.v2.user.getFengdieData",
             "[{\"outBizNo\":\"" + UUID.randomUUID().toString() + "\"}]"
         )
     }
 
-    suspend fun getSignStatus(): Result<JsonObject> {
+    suspend fun getSignStatus(): Result<JSONObject> {
         return request(
             "com.alipay.omegakoi.town.v2.signIn.getSignInStatus",
             "[{\"outBizNo\":\"" + UUID.randomUUID().toString() + "\"}]"
         )
     }
 
-    suspend fun signIn(): Result<JsonObject> {
+    suspend fun signIn(): Result<JSONObject> {
         return request(
             "com.alipay.omegakoi.town.v2.signIn.signIn",
             "[{\"outBizNo\":\"" + UUID.randomUUID().toString() + "\"}]"
         )
     }
 
-    suspend fun getProduct(): Result<JsonObject> {
+    suspend fun getProduct(): Result<JSONObject> {
         return request(
             "com.alipay.omegakoi.town.v2.shop.getProduct",
             "[{\"outBizNo\":\"" + UUID.randomUUID().toString() + "\"}]"
         )
     }
 
-    suspend fun getUserGrounds(): Result<JsonObject> {
+    suspend fun getUserGrounds(): Result<JSONObject> {
         return request(
             "com.alipay.omegakoi.town.v2.ground.getUserGrounds",
             "[{\"outBizNo\":\"" + UUID.randomUUID().toString() + "\"}]"
         )
     }
 
-    suspend fun getUserHouses(): Result<JsonObject> {
+    suspend fun getUserHouses(): Result<JSONObject> {
         return request(
             "com.alipay.omegakoi.town.v2.house.getUserHouses",
             "[{\"outBizNo\":\"" + UUID.randomUUID().toString() + "\"}]"
         )
     }
 
-    suspend fun collect(houseId: String, id: Long): Result<JsonObject> {
+    suspend fun collect(houseId: String, id: Long): Result<JSONObject> {
         return request(
             "com.alipay.omegakoi.town.v2.house.collect",
             "[{\"houseId\":\"" + houseId + "\",\"id\":" + id
@@ -158,7 +159,7 @@ object OmegakoiTownRpcCall {
         )
     }
 
-    suspend fun matchCrowd(): Result<JsonObject> {
+    suspend fun matchCrowd(): Result<JSONObject> {
         return request(
             "com.alipay.omegakoi.common.user.matchCrowd",
             "[{\"crowdCodes\":[\"OUW7WQPH7\",\"OM9K933XZ\"],\"outBizNo\":\"60123460-b6ac-11ee-95b2-3be423343437\"}]"

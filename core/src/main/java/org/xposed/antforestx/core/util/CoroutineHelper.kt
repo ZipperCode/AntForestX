@@ -11,12 +11,13 @@ import kotlinx.coroutines.android.asCoroutineDispatcher
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.CoroutineContext
 
-private val globalCoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-    Logger.e("CoroutineExceptionHandler", throwable)
-}
 
 object CoroutineHelper {
+    val globalCoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        Logger.e("CoroutineExceptionHandler", throwable)
+    }
 
     private val subLoopThread = HandlerThread("SubLoopThread")
 
@@ -31,6 +32,12 @@ object CoroutineHelper {
         subLoopThread.start()
         val handler = Handler(subLoopThread.looper)
         CoroutineScope(handler.asCoroutineDispatcher() + globalCoroutineExceptionHandler)
+    }
+
+    fun createCoroutine(context: CoroutineContext): CoroutineScope {
+        return CoroutineScope(
+            context + globalCoroutineExceptionHandler
+        )
     }
 
     fun cancelAllTask() {

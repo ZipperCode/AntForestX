@@ -1,6 +1,7 @@
 package org.xposed.antforestx.core.ant
 
 import kotlinx.serialization.json.JsonObject
+import org.json.JSONObject
 import org.xposed.antforestx.core.util.RandomUtils
 import org.xposed.antforestx.core.util.toListJson
 
@@ -12,7 +13,7 @@ object ReserveRpcCall {
     private val uniqueId: String
         get() = System.currentTimeMillis().toString() + RandomUtils.nextLong()
 
-    suspend fun queryTreeItemsForExchange(): Result<JsonObject> {
+    suspend fun queryTreeItemsForExchange(): Result<JSONObject> {
         val json = mapOf(
             "cityCode" to "370100",
             "itemTypes" to "",
@@ -22,7 +23,7 @@ object ReserveRpcCall {
         return RpcUtil.request("alipay.antforest.forest.h5.queryTreeItemsForExchange", json)
     }
 
-    suspend fun queryTreeForExchange(projectId: String): Result<JsonObject> {
+    suspend fun queryTreeForExchange(projectId: String): Result<JSONObject> {
         return RpcUtil.request(
             "alipay.antforest.forest.h5.queryTreeForExchange",
             "[{\"projectId\":\"" + projectId + "\",\"version\":\"" + VERSION
@@ -30,7 +31,7 @@ object ReserveRpcCall {
         )
     }
 
-    suspend fun exchangeTree(projectId: String): Result<JsonObject> {
+    suspend fun exchangeTree(projectId: String): Result<JSONObject> {
         val projectId_num = projectId.toInt()
         return RpcUtil.request(
             "alipay.antmember.forest.h5.exchangeTree",
@@ -40,7 +41,7 @@ object ReserveRpcCall {
     }
 
     /* 净滩行动 */
-    suspend fun queryCultivationList(): Result<JsonObject> {
+    suspend fun queryCultivationList(): Result<JSONObject> {
         val json = mapOf(
             "source" to "ANT_FOREST",
             "version" to VERSION3
@@ -48,7 +49,7 @@ object ReserveRpcCall {
         return RpcUtil.request("alipay.antocean.ocean.h5.queryCultivationList", json)
     }
 
-    suspend fun queryCultivationDetail(cultivationCode: String, projectCode: String): Result<JsonObject> {
+    suspend fun queryCultivationDetail(cultivationCode: String, projectCode: String): Result<JSONObject> {
         return RpcUtil.request(
             "alipay.antocean.ocean.h5.queryCultivationDetail",
             "[{\"cultivationCode\":\"" + cultivationCode + "\",\"projectCode\":\"" + projectCode
@@ -56,7 +57,7 @@ object ReserveRpcCall {
         )
     }
 
-    suspend fun oceanExchangeTree(cultivationCode: String, projectCode: String): Result<JsonObject> {
+    suspend fun oceanExchangeTree(cultivationCode: String, projectCode: String): Result<JSONObject> {
         return RpcUtil.request(
             "alipay.antocean.ocean.h5.exchangeTree",
             "[{\"cultivationCode\":\"" + cultivationCode + "\",\"projectCode\":\"" + projectCode

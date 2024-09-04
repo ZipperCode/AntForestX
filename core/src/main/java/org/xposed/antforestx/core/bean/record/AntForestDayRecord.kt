@@ -24,20 +24,20 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class AntForestDayRecord(
-    val dayOfYear: Int,
-    val collectStatistics: TimeStatistics,
-    val friendWaterList: List<FriendWaterRecord>,
-    val cooperateWaterList: List<String>,
-    val protectedAreaList: List<ProtectedAreaRecord>,
-    val protectedAncientTreeList: List<String>,
-    val isProtectedEnergyBubble: Boolean,
-    val isSyncStep: Boolean,
-    val isDonateStep: Boolean,
-    val isExchangedDoubleCard: Boolean,
-    val exchangedDoubleCardCount: Int,
-    val useDoubleClickCount: Int,
-    val isExchangedShield: Boolean,
-    val exchangedShieldCount: Int,
+    val dayOfYear: Int = 1,
+    val collectStatistics: TimeStatistics = TimeStatistics(CollectTimeType.TODAY),
+    val friendWaterList: List<FriendWaterRecord> = emptyList(),
+    val cooperateWaterList: List<String> = emptyList(),
+    val protectedAreaList: List<ProtectedAreaRecord> = emptyList(),
+    val protectedAncientTreeList: List<String> = emptyList(),
+    val isProtectedEnergyBubble: Boolean = false,
+    val isSyncStep: Boolean = false,
+    val isDonateStep: Boolean = false,
+    val isExchangedDoubleCard: Boolean = false,
+    val exchangedDoubleCardCount: Int = 0,
+    val useDoubleClickCount: Int = 0,
+    val isExchangedShield: Boolean = false,
+    val exchangedShieldCount: Int = 0,
 )
 
 /**

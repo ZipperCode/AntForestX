@@ -3,6 +3,7 @@ package org.xposed.antforestx.core.ant
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.serializer
+import org.json.JSONObject
 import org.xposed.antforestx.core.util.RandomUtils
 import org.xposed.antforestx.core.util.toListJson
 import java.util.UUID
@@ -15,12 +16,12 @@ object AntForestRpcCall {
         return System.currentTimeMillis().toString() + RandomUtils.nextLong()
     }
 
-    suspend fun fillUserRobFlag(userIdList: List<String>): Result<JsonObject> {
+    suspend fun fillUserRobFlag(userIdList: List<String>): Result<JSONObject> {
         val idsJson = Json.encodeToString(serializer(), userIdList)
         return RpcUtil.request("alipay.antforest.forest.h5.fillUserRobFlag", """[{"userIdList": $idsJson }]""")
     }
 
-    suspend fun queryEnergyRanking(): Result<JsonObject> {
+    suspend fun queryEnergyRanking(): Result<JSONObject> {
         val json = mapOf(
             "periodType" to "day",
             "rankType" to "energyRank",
@@ -30,7 +31,7 @@ object AntForestRpcCall {
         return RpcUtil.request("alipay.antmember.forest.h5.queryEnergyRanking", json)
     }
 
-    suspend fun queryHomePage(): Result<JsonObject> {
+    suspend fun queryHomePage(): Result<JSONObject> {
         val json = mapOf(
             "configVersionMap" to mapOf(
                 "wateringBubbleConfig" to "10"
@@ -42,7 +43,7 @@ object AntForestRpcCall {
         return RpcUtil.request("alipay.antforest.forest.h5.queryHomePage", json)
     }
 
-    suspend fun queryFriendHomePage(userId: String): Result<JsonObject> {
+    suspend fun queryFriendHomePage(userId: String): Result<JSONObject> {
         val json = mapOf(
             "canRobFlags" to "F,F,F,F,F",
             "configVersionMap" to mapOf(
@@ -56,7 +57,7 @@ object AntForestRpcCall {
         return RpcUtil.request("alipay.antforest.forest.h5.queryFriendHomePage", json)
     }
 
-    suspend fun collectEnergy(bizType: String?, userId: String, bubbleId: Long): Result<JsonObject> {
+    suspend fun collectEnergy(bizType: String?, userId: String, bubbleId: Long): Result<JSONObject> {
         val args1 = if (bizType.isNullOrEmpty()) {
             ("[{\"bizType\":\"\",\"bubbleIds\":[" + bubbleId
                     + "],\"source\":\"chInfo_ch_appcenter__chsub_9patch\",\"userId\":\"" + userId + "\",\"version\":\""
@@ -68,18 +69,18 @@ object AntForestRpcCall {
         return RpcUtil.request("alipay.antmember.forest.h5.collectEnergy", args1)
     }
 
-    suspend fun batchRobEnergy(userId: String, bubbleId: List<String?>?): Result<JsonObject> {
+    suspend fun batchRobEnergy(userId: String, bubbleId: List<String?>?): Result<JSONObject> {
         val args1 = ("[{\"bizType\":\"\",\"bubbleIds\":[" + java.lang.String.join(",", bubbleId)
                 + "],\"fromAct\":\"BATCH_ROB_ENERGY\",\"source\":\"chInfo_ch_appcenter__chsub_9patch\",\"userId\":\"" + userId + "\",\"version\":\""
                 + VERSION + "\"}]")
         return RpcUtil.request("alipay.antmember.forest.h5.collectEnergy", args1)
     }
 
-    suspend fun collectRebornEnergy(): Result<JsonObject> {
+    suspend fun collectRebornEnergy(): Result<JSONObject> {
         return RpcUtil.request("alipay.antforest.forest.h5.collectRebornEnergy", "[{\"source\":\"chInfo_ch_appcenter__chsub_9patch\"}]")
     }
 
-    suspend fun transferEnergy(targetUser: String, bizNo: String, energyId: Int): Result<JsonObject> {
+    suspend fun transferEnergy(targetUser: String, bizNo: String, energyId: Int): Result<JSONObject> {
         return RpcUtil.request(
             "alipay.antmember.forest.h5.transferEnergy", "[{\"bizNo\":\"" +
                     bizNo + UUID.randomUUID().toString() + "\",\"energyId\":" + energyId +
@@ -88,19 +89,19 @@ object AntForestRpcCall {
         )
     }
 
-    suspend fun forFriendCollectEnergy(targetUserId: String, bubbleId: Long): Result<JsonObject> {
+    suspend fun forFriendCollectEnergy(targetUserId: String, bubbleId: Long): Result<JSONObject> {
         val args1 = "[{\"bubbleIds\":[$bubbleId],\"targetUserId\":\"$targetUserId\"}]"
         return RpcUtil.request("alipay.antmember.forest.h5.forFriendCollectEnergy", args1)
     }
 
-    suspend fun vitalitySign(): Result<JsonObject> {
+    suspend fun vitalitySign(): Result<JSONObject> {
         return RpcUtil.request(
             "alipay.antforest.forest.h5.vitalitySign",
             "[{\"source\":\"chInfo_ch_appcenter__chsub_9patch\"}]"
         )
     }
 
-    suspend fun queryTaskList(): Result<JsonObject> {
+    suspend fun queryTaskList(): Result<JSONObject> {
         return RpcUtil.request(
             "alipay.antforest.forest.h5.queryTaskList",
             "[{\"extend\":{},\"fromAct\":\"home_task_list\",\"source\":\"chInfo_ch_appcenter__chsub_9patch\",\"version\":\""
@@ -108,26 +109,26 @@ object AntForestRpcCall {
         )
     }
 
-    suspend fun queryEnergyRainHome(): Result<JsonObject> {
+    suspend fun queryEnergyRainHome(): Result<JSONObject> {
         return RpcUtil.request("alipay.antforest.forest.h5.queryEnergyRainHome", "[{\"version\":\"$VERSION\"}]")
     }
 
-    suspend fun queryEnergyRainCanGrantList(): Result<JsonObject> {
+    suspend fun queryEnergyRainCanGrantList(): Result<JSONObject> {
         return RpcUtil.request("alipay.antforest.forest.h5.queryEnergyRainCanGrantList", "[{}]")
     }
 
-    suspend fun grantEnergyRainChance(targetUserId: String): Result<JsonObject> {
+    suspend fun grantEnergyRainChance(targetUserId: String): Result<JSONObject> {
         return RpcUtil.request(
             "alipay.antforest.forest.h5.grantEnergyRainChance",
             "[{\"targetUserId\":$targetUserId}]"
         )
     }
 
-    suspend fun startEnergyRain(): Result<JsonObject> {
+    suspend fun startEnergyRain(): Result<JSONObject> {
         return RpcUtil.request("alipay.antforest.forest.h5.startEnergyRain", "[{\"version\":\"$VERSION\"}]")
     }
 
-    suspend fun energyRainSettlement(saveEnergy: Int, token: String): Result<JsonObject> {
+    suspend fun energyRainSettlement(saveEnergy: Int, token: String): Result<JSONObject> {
         return RpcUtil.request(
             "alipay.antforest.forest.h5.energyRainSettlement",
             "[{\"activityPropNums\":0,\"saveEnergy\":" + saveEnergy + ",\"token\":\"" + token + "\",\"version\":\""
@@ -135,7 +136,7 @@ object AntForestRpcCall {
         )
     }
 
-    suspend fun receiveTaskAward(sceneCode: String, taskType: String): Result<JsonObject> {
+    suspend fun receiveTaskAward(sceneCode: String, taskType: String): Result<JSONObject> {
         return RpcUtil.request(
             "com.alipay.antiep.receiveTaskAward",
             "[{\"ignoreLimit\":false,\"requestType\":\"H5\",\"sceneCode\":\"" + sceneCode +
@@ -143,7 +144,7 @@ object AntForestRpcCall {
         )
     }
 
-    suspend fun finishTask(sceneCode: String, taskType: String): Result<JsonObject> {
+    suspend fun finishTask(sceneCode: String, taskType: String): Result<JSONObject> {
         val outBizNo = taskType + "_" + RandomUtils.nextDouble()
         return RpcUtil.request(
             "com.alipay.antiep.finishTask",
@@ -152,7 +153,7 @@ object AntForestRpcCall {
         )
     }
 
-    suspend fun popupTask(): Result<JsonObject> {
+    suspend fun popupTask(): Result<JSONObject> {
         return RpcUtil.request(
             "alipay.antforest.forest.h5.popupTask",
             "[{\"fromAct\":\"pop_task\",\"needInitSign\":false,\"source\":\"chInfo_ch_appcenter__chsub_9patch\",\"statusList\":[\"TODO\",\"FINISHED\"],\"version\":\""
@@ -160,7 +161,7 @@ object AntForestRpcCall {
         )
     }
 
-    suspend fun antiepSign(entityId: String, userId: String): Result<JsonObject> {
+    suspend fun antiepSign(entityId: String, userId: String): Result<JSONObject> {
         return RpcUtil.request(
             "com.alipay.antiep.sign",
             "[{\"entityId\":\"" + entityId
@@ -169,7 +170,7 @@ object AntForestRpcCall {
         )
     }
 
-    suspend fun queryPropList(onlyGive: Boolean): Result<JsonObject> {
+    suspend fun queryPropList(onlyGive: Boolean): Result<JSONObject> {
         return RpcUtil.request(
             "alipay.antforest.forest.h5.queryPropList",
             "[{\"onlyGive\":\"" + (if (onlyGive) "Y" else "")
@@ -177,7 +178,7 @@ object AntForestRpcCall {
         )
     }
 
-    suspend fun giveProp(giveConfigId: String, propId: String, targetUserId: String): Result<JsonObject> {
+    suspend fun giveProp(giveConfigId: String, propId: String, targetUserId: String): Result<JSONObject> {
         return RpcUtil.request(
             "alipay.antforest.forest.h5.giveProp",
             "[{\"giveConfigId\":\"" + giveConfigId + "\",\"propId\":\"" + propId
@@ -185,7 +186,7 @@ object AntForestRpcCall {
         )
     }
 
-    suspend fun collectProp(giveConfigId: String, giveId: String): Result<JsonObject> {
+    suspend fun collectProp(giveConfigId: String, giveId: String): Result<JSONObject> {
         return RpcUtil.request(
             "alipay.antforest.forest.h5.collectProp",
             "[{\"giveConfigId\":\"" + giveConfigId + "\",\"giveId\":\"" + giveId
@@ -193,7 +194,7 @@ object AntForestRpcCall {
         )
     }
 
-    suspend fun consumeProp(propId: String, propType: String): Result<JsonObject> {
+    suspend fun consumeProp(propId: String, propType: String): Result<JSONObject> {
         return RpcUtil.request(
             "alipay.antforest.forest.h5.consumeProp",
             "[{\"propId\":\"" + propId + "\",\"propType\":\"" + propType +
@@ -202,7 +203,7 @@ object AntForestRpcCall {
         )
     }
 
-    suspend fun itemList(labelType: String): Result<JsonObject> {
+    suspend fun itemList(labelType: String): Result<JSONObject> {
         return RpcUtil.request(
             "com.alipay.antiep.itemList",
             "[{\"extendInfo\":\"{}\",\"labelType\":\"" + labelType
@@ -210,7 +211,7 @@ object AntForestRpcCall {
         )
     }
 
-    suspend fun itemDetail(spuId: String): Result<JsonObject> {
+    suspend fun itemDetail(spuId: String): Result<JSONObject> {
         return RpcUtil.request(
             "com.alipay.antiep.itemDetail",
             "[{\"requestType\":\"rpc\",\"sceneCode\":\"ANTFOREST_VITALITY\",\"source\":\"afEntry\",\"spuId\":\""
@@ -218,14 +219,14 @@ object AntForestRpcCall {
         )
     }
 
-    suspend fun queryVitalityStoreIndex(): Result<JsonObject> {
+    suspend fun queryVitalityStoreIndex(): Result<JSONObject> {
         return RpcUtil.request(
             "alipay.antforest.forest.h5.queryVitalityStoreIndex",
             "[{\"source\":\"afEntry\"}]"
         )
     }
 
-    suspend fun exchangeBenefit(spuId: String, skuId: String): Result<JsonObject> {
+    suspend fun exchangeBenefit(spuId: String, skuId: String): Result<JSONObject> {
         return RpcUtil.request(
             "com.alipay.antcommonweal.exchange.h5.exchangeBenefit",
             ("[{\"sceneCode\":\"ANTFOREST_VITALITY\",\"requestId\":\"" + System.currentTimeMillis()
@@ -234,48 +235,48 @@ object AntForestRpcCall {
         )
     }
 
-    suspend fun testH5Rpc(operationTpye: String?, requestDate: String?): Result<JsonObject> {
+    suspend fun testH5Rpc(operationTpye: String?, requestDate: String?): Result<JSONObject> {
         return RpcUtil.request(operationTpye!!, requestDate!!)
     }
 
 
     /* 神奇物种 */
-    suspend fun queryAnimalStatus(): Result<JsonObject> {
+    suspend fun queryAnimalStatus(): Result<JSONObject> {
         return RpcUtil.request(
             "alipay.antdodo.rpc.h5.queryAnimalStatus",
             "[{\"source\":\"chInfo_ch_appcenter__chsub_9patch\"}]"
         )
     }
 
-    suspend fun antdodoHomePage(): Result<JsonObject> {
+    suspend fun antdodoHomePage(): Result<JSONObject> {
         return RpcUtil.request(
             "alipay.antdodo.rpc.h5.homePage",
             "[{}]"
         )
     }
 
-    suspend fun taskEntrance(): Result<JsonObject> {
+    suspend fun taskEntrance(): Result<JSONObject> {
         return RpcUtil.request(
             "alipay.antdodo.rpc.h5.taskEntrance",
             "[{\"statusList\":[\"TODO\",\"FINISHED\"]}]"
         )
     }
 
-    suspend fun antdodoCollect(): Result<JsonObject> {
+    suspend fun antdodoCollect(): Result<JSONObject> {
         return RpcUtil.request(
             "alipay.antdodo.rpc.h5.collect",
             "[{}]"
         )
     }
 
-    suspend fun antdodoTaskList(): Result<JsonObject> {
+    suspend fun antdodoTaskList(): Result<JSONObject> {
         return RpcUtil.request(
             "alipay.antdodo.rpc.h5.taskList",
             "[{}]"
         )
     }
 
-    suspend fun antdodoFinishTask(sceneCode: String, taskType: String): Result<JsonObject> {
+    suspend fun antdodoFinishTask(sceneCode: String, taskType: String): Result<JSONObject> {
         val uniqueId: String = AntForestRpcCall.getUniqueId()
         return RpcUtil.request(
             "com.alipay.antiep.finishTask",
@@ -285,7 +286,7 @@ object AntForestRpcCall {
         )
     }
 
-    suspend fun antdodoReceiveTaskAward(sceneCode: String, taskType: String): Result<JsonObject> {
+    suspend fun antdodoReceiveTaskAward(sceneCode: String, taskType: String): Result<JSONObject> {
         return RpcUtil.request(
             "com.alipay.antiep.receiveTaskAward",
             "[{\"ignoreLimit\":0,\"requestType\":\"rpc\",\"sceneCode\":\"" + sceneCode
@@ -294,21 +295,21 @@ object AntForestRpcCall {
         )
     }
 
-    suspend fun antdodoPropList(): Result<JsonObject> {
+    suspend fun antdodoPropList(): Result<JSONObject> {
         return RpcUtil.request(
             "alipay.antdodo.rpc.h5.propList",
             "[{}]"
         )
     }
 
-    suspend fun antdodoConsumeProp(propId: String, propType: String): Result<JsonObject> {
+    suspend fun antdodoConsumeProp(propId: String, propType: String): Result<JSONObject> {
         return RpcUtil.request(
             "alipay.antdodo.rpc.h5.consumeProp",
             "[{\"propId\":\"$propId\",\"propType\":\"$propType\"}]"
         )
     }
 
-    suspend fun queryBookInfo(bookId: String): Result<JsonObject> {
+    suspend fun queryBookInfo(bookId: String): Result<JSONObject> {
         return RpcUtil.request(
             "alipay.antdodo.rpc.h5.queryBookInfo",
             "[{\"bookId\":\"$bookId\"}]"
@@ -316,7 +317,7 @@ object AntForestRpcCall {
     }
 
     // 送卡片给好友
-    suspend fun antdodoSocial(targetAnimalId: String, targetUserId: String): Result<JsonObject> {
+    suspend fun antdodoSocial(targetAnimalId: String, targetUserId: String): Result<JSONObject> {
         return RpcUtil.request(
             "alipay.antdodo.rpc.h5.social",
             "[{\"actionCode\":\"GIFT_TO_FRIEND\",\"source\":\"GIFT_TO_FRIEND_FROM_CC\",\"targetAnimalId\":\""
@@ -326,28 +327,28 @@ object AntForestRpcCall {
     }
 
     /* 巡护保护地 */
-    suspend fun queryUserPatrol(): Result<JsonObject> {
+    suspend fun queryUserPatrol(): Result<JSONObject> {
         return RpcUtil.request(
             "alipay.antforest.forest.h5.queryUserPatrol",
             "[{\"source\":\"ant_forest\",\"timezoneId\":\"Asia/Shanghai\"}]"
         )
     }
 
-    suspend fun queryMyPatrolRecord(): Result<JsonObject> {
+    suspend fun queryMyPatrolRecord(): Result<JSONObject> {
         return RpcUtil.request(
             "alipay.antforest.forest.h5.queryMyPatrolRecord",
             "[{\"source\":\"ant_forest\",\"timezoneId\":\"Asia/Shanghai\"}]"
         )
     }
 
-    suspend fun switchUserPatrol(targetPatrolId: String): Result<JsonObject> {
+    suspend fun switchUserPatrol(targetPatrolId: String): Result<JSONObject> {
         return RpcUtil.request(
             "alipay.antforest.forest.h5.switchUserPatrol",
             "[{\"source\":\"ant_forest\",\"targetPatrolId\":$targetPatrolId,\"timezoneId\":\"Asia/Shanghai\"}]"
         )
     }
 
-    suspend fun patrolGo(nodeIndex: Int, patrolId: Int): Result<JsonObject> {
+    suspend fun patrolGo(nodeIndex: Int, patrolId: Int): Result<JSONObject> {
         return RpcUtil.request(
             "alipay.antforest.forest.h5.patrolGo",
             "[{\"nodeIndex\":" + nodeIndex + ",\"patrolId\":" + patrolId
@@ -355,7 +356,7 @@ object AntForestRpcCall {
         )
     }
 
-    suspend fun patrolKeepGoing(nodeIndex: Int, patrolId: Int, eventType: String?): Result<JsonObject> {
+    suspend fun patrolKeepGoing(nodeIndex: Int, patrolId: Int, eventType: String?): Result<JSONObject> {
         var args: String? = null
         args = when (eventType) {
             "video" -> ("[{\"nodeIndex\":" + nodeIndex + ",\"patrolId\":" + patrolId
@@ -373,14 +374,14 @@ object AntForestRpcCall {
         return RpcUtil.request("alipay.antforest.forest.h5.patrolKeepGoing", args)
     }
 
-    suspend fun exchangePatrolChance(costStep: Int): Result<JsonObject> {
+    suspend fun exchangePatrolChance(costStep: Int): Result<JSONObject> {
         return RpcUtil.request(
             "alipay.antforest.forest.h5.exchangePatrolChance",
             "[{\"costStep\":$costStep,\"source\":\"ant_forest\",\"timezoneId\":\"Asia/Shanghai\"}]"
         )
     }
 
-    suspend fun queryAnimalAndPiece(animalId: Int): Result<JsonObject> {
+    suspend fun queryAnimalAndPiece(animalId: Int): Result<JSONObject> {
         var args: String? = null
         args = if (animalId != 0) {
             "[{\"animalId\":$animalId,\"source\":\"ant_forest\",\"timezoneId\":\"Asia/Shanghai\"}]"
@@ -390,7 +391,7 @@ object AntForestRpcCall {
         return RpcUtil.request("alipay.antforest.forest.h5.queryAnimalAndPiece", args)
     }
 
-    suspend fun combineAnimalPiece(animalId: Int, piecePropIds: String): Result<JsonObject> {
+    suspend fun combineAnimalPiece(animalId: Int, piecePropIds: String): Result<JSONObject> {
         return RpcUtil.request(
             "alipay.antforest.forest.h5.combineAnimalPiece",
             "[{\"animalId\":" + animalId + ",\"piecePropIds\":" + piecePropIds
@@ -398,7 +399,7 @@ object AntForestRpcCall {
         )
     }
 
-    suspend fun AnimalConsumeProp(propGroup: String, propId: String, propType: String): Result<JsonObject> {
+    suspend fun AnimalConsumeProp(propGroup: String, propId: String, propType: String): Result<JSONObject> {
         return RpcUtil.request(
             "alipay.antforest.forest.h5.consumeProp",
             "[{\"propGroup\":\"" + propGroup + "\",\"propId\":\"" + propId + "\",\"propType\":\"" + propType
@@ -406,7 +407,7 @@ object AntForestRpcCall {
         )
     }
 
-    suspend fun collectAnimalRobEnergy(propId: String, propType: String, shortDay: String): Result<JsonObject> {
+    suspend fun collectAnimalRobEnergy(propId: String, propType: String, shortDay: String): Result<JSONObject> {
         return RpcUtil.request(
             "alipay.antforest.forest.h5.collectAnimalRobEnergy",
             "[{\"propId\":\"" + propId + "\",\"propType\":\"" + propType + "\",\"shortDay\":\"" + shortDay
@@ -415,7 +416,7 @@ object AntForestRpcCall {
     }
 
     /* 复活能量 */
-    suspend fun protectBubble(targetUserId: String): Result<JsonObject> {
+    suspend fun protectBubble(targetUserId: String): Result<JSONObject> {
         return RpcUtil.request(
             "alipay.antforest.forest.h5.protectBubble",
             "[{\"source\":\"ANT_FOREST_H5\",\"targetUserId\":\"" + targetUserId + "\",\"version\":\"" + VERSION
@@ -424,7 +425,7 @@ object AntForestRpcCall {
     }
 
     /* 森林礼盒 */
-    suspend fun collectFriendGiftBox(targetId: String, targetUserId: String): Result<JsonObject> {
+    suspend fun collectFriendGiftBox(targetId: String, targetUserId: String): Result<JSONObject> {
         return RpcUtil.request(
             "alipay.antforest.forest.h5.collectFriendGiftBox",
             "[{\"source\":\"chInfo_ch_appcenter__chsub_9patch\",\"targetId\":\"" + targetId
@@ -432,14 +433,14 @@ object AntForestRpcCall {
         )
     }
 
-    suspend fun consultForSendEnergyByAction(sourceType: String): Result<JsonObject> {
+    suspend fun consultForSendEnergyByAction(sourceType: String): Result<JSONObject> {
         return RpcUtil.request(
             "alipay.bizfmcg.greenlife.consultForSendEnergyByAction",
             "[{\"sourceType\":\"$sourceType\"}]"
         )
     }
 
-    suspend fun sendEnergyByAction(sourceType: String): Result<JsonObject> {
+    suspend fun sendEnergyByAction(sourceType: String): Result<JSONObject> {
         return RpcUtil.request(
             "alipay.bizfmcg.greenlife.sendEnergyByAction",
             ("[{\"actionType\":\"GOODS_BROWSE\",\"requestId\":\"" + RandomUtils.getRandom(8)).toString() + "\",\"sourceType\":\"" + sourceType + "\"}]"

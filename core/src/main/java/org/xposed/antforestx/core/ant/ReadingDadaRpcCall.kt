@@ -1,6 +1,7 @@
 package org.xposed.antforestx.core.ant
 
 import kotlinx.serialization.json.JsonObject
+import org.json.JSONObject
 import org.xposed.antforestx.core.ant.RpcUtil.request
 import org.xposed.antforestx.core.util.toListJson
 
@@ -12,7 +13,7 @@ import org.xposed.antforestx.core.util.toListJson
 object ReadingDadaRpcCall {
     private const val VERSION = "1"
 
-    suspend fun submitAnswer(activityId: String?, outBizId: String?, questionId: String, answer: String): Result<JsonObject> {
+    suspend fun submitAnswer(activityId: String?, outBizId: String?, questionId: String, answer: String): Result<JSONObject> {
         return request(
             "com.alipay.reading.game.dada.openDailyAnswer.submitAnswer",
             "[{\"activityId\":\"" + activityId + "\",\"answer\":\"" + answer + "\",\"dadaVersion\":\"1.3.0\"," +
@@ -21,7 +22,7 @@ object ReadingDadaRpcCall {
         )
     }
 
-    suspend fun getQuestion(activityId: String): Result<JsonObject> {
+    suspend fun getQuestion(activityId: String): Result<JSONObject> {
         val json = mapOf(
             "activityId" to activityId,
             "dadaVersion" to "1.3.0",
