@@ -3,8 +3,11 @@ package org.xposed.antforestx.core.manager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
+import org.xposed.antforestx.core.config.AntBasicConfig
 import org.xposed.antforestx.core.config.AntConfig
 import org.xposed.antforestx.core.config.AntForestConfig
+import org.xposed.antforestx.core.config.AntManorConfig
+import org.xposed.antforestx.core.config.AntOtherConfig
 import org.xposed.antforestx.core.util.DateUtils
 import org.xposed.antforestx.core.util.FileDataProvider
 
@@ -12,7 +15,10 @@ object ConfigManager {
 
     private val configFlow = MutableStateFlow(AntConfig())
 
+    val basicConfig: AntBasicConfig get() = configFlow.value.basicConfig
     val forestConfig: AntForestConfig get() = configFlow.value.forestConfig
+    val manorConfig: AntManorConfig get() = configFlow.value.manorConfig
+    val otherConfig: AntOtherConfig get() = configFlow.value.otherConfig
 
     val enableToast: Boolean get() = configFlow.value.basicConfig.showToast
 
@@ -27,6 +33,8 @@ object ConfigManager {
      *
      */
     val enableAncientTree: Boolean get() = forestConfig.enableProtectAncientTree && isAncientTreeWeek
+
+    val enableBookRead get() = otherConfig.enableReadListenBook
 
     fun getConfig(): AntConfig {
         return configFlow.value

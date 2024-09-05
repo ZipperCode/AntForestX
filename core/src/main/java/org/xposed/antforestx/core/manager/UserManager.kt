@@ -20,6 +20,8 @@ object UserManager {
 
     private val antRecordFlow = MutableStateFlow(AntRecord())
 
+    val antRecord: AntRecord get() = antRecordFlow.value
+
     val energyStatistics: AntEnergyStatistics get() = antRecordFlow.value.energyStatistics
     val forestDayRecord: AntForestDayRecord get() = antRecordFlow.value.forestDayRecord
     val manorRecord: AntManorRecord get() = antRecordFlow.value.manorRecord
@@ -40,6 +42,10 @@ object UserManager {
                     }
                 }
         }
+    }
+
+    fun updateNewRecord(newRecord: AntRecord) {
+        antRecordFlow.value = newRecord
     }
 
     suspend fun waitGetCurrentUid(): String {
