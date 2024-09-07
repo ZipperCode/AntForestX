@@ -66,6 +66,7 @@ dependencies {
     implementation(libs.androidx.viewmodel)
 
     implementation(libs.compose.destinations.core)
+    implementation(libs.androidx.interpolator)
     ksp(libs.compose.destinations.ksp)
 
     testImplementation(libs.junit)
