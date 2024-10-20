@@ -5,10 +5,10 @@ import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam
 import org.xposed.antforestx.core.ant.AntRuntime
 import org.xposed.antforestx.core.ant.AntRuntime.classLoader
-import org.xposed.antforestx.core.util.Logger
 import org.xposed.antforestx.core.util.invokeStaticMethodByName
 import org.xposed.antforestx.core.util.newMethodHook
 import org.xposed.antforestx.core.util.newMethodReplace
+import timber.log.Timber
 import java.lang.reflect.Method
 import java.lang.reflect.Type
 
@@ -68,7 +68,7 @@ value class ClassMemberWrap(
         val clazz = XposedHelpers.findClassIfExists(className, AntRuntime.classLoader)
         val name = clazz.simpleName
         for (declaredMethod in clazz.declaredMethods) {
-            Logger.i(
+            Timber.i(
                 "PrintMethods => %s",
                 "${declaredMethod.returnType} ${name}#${declaredMethod.name}(${declaredMethod.parameterTypes.joinToString(", ") { it.name }})"
             )
@@ -86,7 +86,7 @@ value class ClassMemberWrap(
     fun invoker(methodWrap: MethodMemberWrap): Invoker {
         val findClazz = findClass(className, AntRuntime.classLoader)
         if (findClazz == null) {
-            Logger.e("invoker#findClass $className error")
+            Timber.e("invoker#findClass $className error")
             return Invoker(this, methodWrap)
         }
         val result = runCatching {
@@ -104,7 +104,7 @@ value class ClassMemberWrap(
             }
             findClazz.getDeclaredMethod(methodWrap.methodName, *paramList.toTypedArray())
         }.onFailure {
-            Logger.e("invoker#getDeclareMethod ${methodWrap.methodName} error", it)
+            Timber.e(it, "invoker#getDeclareMethod ${methodWrap.methodName} error")
         }
         if (result.isFailure) {
             return Invoker(this, methodWrap)

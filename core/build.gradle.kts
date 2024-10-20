@@ -47,4 +47,7 @@ dependencies {
     compileOnly(fileTree("dir" to "libs", "includes" to listOf("*.jar")))
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.timber)
+    api(libs.moshi)
+    implementation(libs.workmanager)
 }

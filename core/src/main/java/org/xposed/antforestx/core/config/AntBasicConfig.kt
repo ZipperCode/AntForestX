@@ -6,21 +6,23 @@ import kotlinx.serialization.Serializable
  * 基础配置
  * @author zipper
  *
- * @param immediate 立即执行
- * @param recordLog 记录日志
- * @param showToast 显示Toast
- * @param keepAlive 保持唤醒
- * @param wakeupType 唤醒类型
- * @param enableOnGoing 通知禁删
- *
  */
 @Serializable
 data class AntBasicConfig(
-    val immediate: Boolean = false,
-    val recordLog: Boolean = false,
+    /**
+     * 是否记录日志
+     */
+    val enableLogcat: Boolean = false,
+    /**
+     * 是否显示Toast
+     */
     val showToast: Boolean = false,
+    /**
+     * 是否保持唤醒
+     */
     val keepAlive: Boolean = false,
-    val wakeupType: WakeupType = WakeupType.None,
-    val enableOnGoing: Boolean = false,
-    val timeoutRestart: Boolean = false
+    /**
+     * 是否并行执行任务
+     */
+    val isParallel: Boolean = true
 )

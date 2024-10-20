@@ -9,7 +9,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.xposed.antforestx.core.XposedHookEntry
-import org.xposed.antforestx.core.util.Logger
 
 object Starter {
 

@@ -7,25 +7,27 @@ import kotlinx.coroutines.withContext
 import org.xposed.antforestx.core.ant.AntBookReadRpcCall
 import org.xposed.antforestx.core.manager.ConfigManager
 import org.xposed.antforestx.core.manager.UserManager
-import org.xposed.antforestx.core.util.Logger
-import org.xposed.antforestx.core.util.log.ITagLog
+import org.xposed.antforestx.core.util.log.readBook
 import org.xposed.antforestx.core.util.onSuccessCatching
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 /**
  * 阅读书籍
  */
-class AntBookReadTask(override val subTag: String = "阅读任务📖") : ITagLog {
+class AntBookReadTask {
+
+    private val logger: Timber.Tree get() = Timber.readBook()
 
     suspend fun start() = withContext(Dispatchers.IO + CoroutineName("AntBookRead")) {
-        log("阅读书籍任务开始执行")
+        logger.i("开始阅读书籍")
         if (!ConfigManager.enableBookRead) {
-            li("阅读书籍未开启")
+            logger.w("未开启阅读书籍")
             return@withContext
         }
         val lastConsumeTime = UserManager.antRecord.consumeGold
         if (System.currentTimeMillis() - lastConsumeTime < TimeUnit.HOURS.toMillis(6)) {
-            li("距离上次阅读书籍不足6小时，跳过")
+            logger.w("距离上次阅读书籍不足6小时，跳过")
             return@withContext
         }
         UserManager.updateNewRecord(UserManager.antRecord.copy(consumeGold = System.currentTimeMillis()))
@@ -37,11 +39,11 @@ class AntBookReadTask(override val subTag: String = "阅读任务📖") : ITagLo
 
 
     private suspend fun queryTask() {
-        log("查询书籍任务")
+        logger.i("查询书籍任务")
         var taskReceive = false
         AntBookReadRpcCall.queryTaskCenterPage().onSuccessCatching { jsonObject ->
             if (!jsonObject.getBoolean("success")) {
-                lw("查询书籍任务失败", jsonObject)
+                logger.w("查询书籍任务失败")
                 return@onSuccessCatching
             }
             val userTaskGroupList = jsonObject.getJSONObject("data")
@@ -91,39 +93,38 @@ class AntBookReadTask(override val subTag: String = "阅读任务📖") : ITagLo
                 queryTask()
             }
         }.onFailure {
-            le("查询书籍任务失败", it)
+            logger.w("查询书籍任务失败: %s", it.message)
+            logger.e(it)
         }
     }
 
     private suspend fun collectTaskPrize(taskId: String, taskType: String, title: String) {
-        log("领取书籍任务奖励", taskId, taskType, title)
+        logger.i("领取书籍任务奖励前 %s, %s, %s", taskId, taskType, title)
         AntBookReadRpcCall.collectTaskPrize(taskId, taskType).onSuccessCatching { jsonObject ->
             if (jsonObject.optBoolean("success")) {
-                log(
-                    "领取书籍任务奖励成功, %s-%s#获得 %s",
-                    taskId, title, jsonObject.optJSONObject("data")?.getInt("coinNum")
-                )
+                val num = jsonObject.optJSONObject("data")?.getInt("coinNum")
+                logger.i("领取书籍任务奖励后 %s, %s, %s获得 %s", taskId, taskType, title, num)
             }
         }.onFailure {
-            le("领取书籍任务奖励失败", it)
+            logger.w("领取书籍任务奖励失败: %s", it.message)
         }
     }
 
     private suspend fun taskFinish(taskId: String, taskType: String) {
         AntBookReadRpcCall.taskFinish(taskId, taskType).onSuccessCatching { jsonObject ->
             if (jsonObject.optBoolean("success")) {
-                log("完成任务成功 id:%s, type:%s", taskId, taskType)
+                logger.i("完成任务 %s, %s", taskId, taskType)
             }
         }.onFailure {
-            le("完成任务失败", it)
+            logger.w("完成任务失败: %s", it.message)
         }
     }
 
     private suspend fun queryTreasureBox() {
-        log("查询宝箱任务")
+        logger.i("查询宝箱任务")
         AntBookReadRpcCall.queryTreasureBox().onSuccessCatching { jsonObject ->
             if (!jsonObject.optBoolean("success")) {
-                lw("查询宝箱任务失败", jsonObject)
+                logger.e("查询宝箱任务失败 %s", jsonObject)
                 return@onSuccessCatching
             }
             val treasureBoxVo = jsonObject.getJSONObject("data").getJSONObject("treasureBoxVo")
@@ -133,16 +134,17 @@ class AntBookReadTask(override val subTag: String = "阅读任务📖") : ITagLo
             if (treasureBoxVo.getString("status") == "CAN_OPEN") {
                 AntBookReadRpcCall.openTreasureBox().onSuccess {
                     if (!it.optBoolean("success")) {
-                        Logger.w("宝箱任务开启失败", it)
+                        logger.w("宝箱任务开启失败")
                         return@onSuccess
                     }
                     val coinNum: Int = it.getJSONObject("data").getInt("coinNum")
-                    log("[打开宝箱]#%s", coinNum);
+                    logger.i("打开宝箱完成 %s", coinNum)
                 }
             }
 
         }.onFailure {
-            le("查询宝箱任务失败", it)
+            logger.w("查询宝箱任务失败 %s", it.message)
+            logger.e(it)
         }
     }
 }

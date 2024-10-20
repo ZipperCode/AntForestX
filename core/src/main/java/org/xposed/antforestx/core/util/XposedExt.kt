@@ -7,6 +7,7 @@ import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.XposedHelpers.findClass
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam
 import org.xposed.antforestx.core.ant.AntRuntime.classLoader
+import timber.log.Timber
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
 
@@ -84,7 +85,7 @@ inline fun newMethodReplace(
 }
 
 
-inline fun newInvocation(crossinline block: (proxy: Any, method: Method, args: Array<out Any>) -> Any): InvocationHandler {
+inline fun newInvocation(crossinline block: (proxy: Any, method: Method, args: Array<out Any>) -> Any?): InvocationHandler {
     return InvocationHandler { proxy, method, args -> block(proxy, method, args) }
 }
 
@@ -94,24 +95,27 @@ inline fun <T> runCatch(crossinline block: () -> T): Result<T> {
     }
 }
 
-inline fun findAndHookMethodBefore(
-    clazz: Class<*>?,
-    methodName: String,
-    vararg parameterTypes: Class<*>?,
-    crossinline before: ((XC_MethodHook.MethodHookParam) -> Unit),
-) {
+suspend inline fun runCatchSuspend(crossinline block: suspend () -> Unit) {
+    try {
+        block.invoke()
+    } catch (e: Exception) {
+        Timber.tag("Exception").e(e)
+    }
+}
+
+suspend inline fun <T> runCatchSuspendResult(crossinline block: suspend () -> T): Result<T> {
+    try {
+        return Result.success(block.invoke())
+    } catch (e: Exception) {
+        e.printStackTrace()
+        return Result.failure(e)
+    }
+}
+
+fun findAndHookMethodInternal(clazz: Class<*>?, methodName: String, parameterTypes: Array<out Class<*>?>, callback: XC_MethodHook) {
     clazz ?: return
     runCatch {
         val paramList = arrayListOf<Any?>()
-        val callback = object : XC_MethodHook() {
-            override fun beforeHookedMethod(param: MethodHookParam?) {
-                runCatch {
-                    if (param != null) {
-                        before(param)
-                    }
-                }
-            }
-        }
         if (parameterTypes.isNotEmpty()) {
             for (any in parameterTypes) {
                 paramList.add(any)
@@ -122,35 +126,33 @@ inline fun findAndHookMethodBefore(
     }
 }
 
+inline fun findAndHookMethod(
+    clazz: Class<*>?,
+    methodName: String,
+    vararg parameterTypes: Class<*>?,
+    crossinline before: ((XC_MethodHook.MethodHookParam) -> Unit),
+    crossinline after: ((XC_MethodHook.MethodHookParam) -> Unit),
+) {
+    findAndHookMethodInternal(clazz, methodName, parameterTypes, newMethodHook(before, after))
+}
+
+inline fun findAndHookMethodBefore(
+    clazz: Class<*>?,
+    methodName: String,
+    vararg parameterTypes: Class<*>?,
+    crossinline before: ((XC_MethodHook.MethodHookParam) -> Unit),
+) {
+    findAndHookMethodInternal(clazz, methodName, parameterTypes, newMethodBefore(before))
+}
+
+
 inline fun findAndHookMethodReplace(
     clazz: Class<*>?,
     methodName: String,
     vararg parameterTypes: Class<*>?,
     crossinline replace: ((XC_MethodHook.MethodHookParam) -> Any?),
 ) {
-    clazz ?: return
-    runCatch {
-        val paramList = arrayListOf<Any?>()
-        val callback = object : XC_MethodReplacement() {
-            override fun replaceHookedMethod(param: MethodHookParam?): Any? {
-                try {
-                    if (param != null) {
-                        return replace(param)
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-                return null
-            }
-        }
-        if (parameterTypes.isNotEmpty()) {
-            for (any in parameterTypes) {
-                paramList.add(any)
-            }
-        }
-        paramList.add(callback)
-        XposedHelpers.findAndHookMethod(clazz, methodName, *paramList.toArray())
-    }
+    findAndHookMethodInternal(clazz, methodName, parameterTypes, newMethodReplace(replace))
 }
 
 
@@ -159,45 +161,16 @@ fun findAndHookMethodDoNothing(
     methodName: String,
     vararg parameterTypes: Class<*>?
 ) {
-    clazz ?: return
-    runCatch {
-        val paramList = arrayListOf<Any?>()
-        val callback = XC_MethodReplacement.DO_NOTHING
-        if (parameterTypes.isNotEmpty()) {
-            for (any in parameterTypes) {
-                paramList.add(any)
-            }
-        }
-        paramList.add(callback)
-        XposedHelpers.findAndHookMethod(clazz, methodName, *paramList.toArray())
-    }
+    findAndHookMethodInternal(clazz, methodName, parameterTypes, XC_MethodReplacement.DO_NOTHING)
 }
 
 inline fun findAndHookMethodAfter(
     clazz: Class<*>?,
     methodName: String,
-    vararg parameterTypes: Any?,
+    vararg parameterTypes: Class<*>?,
     crossinline after: ((XC_MethodHook.MethodHookParam) -> Unit),
 ) {
-    runCatch {
-        val paramList = arrayListOf<Any?>()
-        val callback = object : XC_MethodHook() {
-            override fun afterHookedMethod(param: MethodHookParam?) {
-                runCatch {
-                    if (param != null) {
-                        after(param)
-                    }
-                }
-            }
-        }
-        if (parameterTypes.isNotEmpty()) {
-            for (any in parameterTypes) {
-                paramList.add(any)
-            }
-        }
-        paramList.add(callback)
-        XposedHelpers.findAndHookMethod(clazz, methodName, *paramList.toArray())
-    }
+    findAndHookMethodInternal(clazz, methodName, parameterTypes, newMethodAfter(after))
 }
 
 fun findAndHookConstructorAfter(
@@ -207,15 +180,7 @@ fun findAndHookConstructorAfter(
 ) {
     clazz ?: return
     runCatch {
-        XposedHelpers.findAndHookConstructor(clazz, *parameterTypes, object : XC_MethodHook() {
-            override fun afterHookedMethod(param: MethodHookParam?) {
-                runCatch {
-                    if (param != null) {
-                        after(param)
-                    }
-                }
-            }
-        })
+        XposedHelpers.findAndHookConstructor(clazz, *parameterTypes, newMethodAfter(after))
     }
 }
 
@@ -250,15 +215,7 @@ fun LoadPackageParam.findAndHookConstructorAfter(
 ) {
     val clazz = XposedHelpers.findClassIfExists(className, classLoader) ?: return
     runCatch {
-        XposedHelpers.findAndHookConstructor(clazz, *parameterTypes, object : XC_MethodHook() {
-            override fun afterHookedMethod(param: MethodHookParam?) {
-                runCatch {
-                    if (param != null) {
-                        after(param)
-                    }
-                }
-            }
-        })
+        XposedHelpers.findAndHookConstructor(clazz, *parameterTypes, newMethodAfter(after))
     }
 }
 
@@ -269,15 +226,7 @@ fun LoadPackageParam.findAndHookConstructorAfter(
 ) {
     clazz ?: return
     runCatch {
-        XposedHelpers.findAndHookConstructor(clazz, *parameterTypes, object : XC_MethodHook() {
-            override fun afterHookedMethod(param: MethodHookParam?) {
-                runCatch {
-                    if (param != null) {
-                        after(param)
-                    }
-                }
-            }
-        })
+        XposedHelpers.findAndHookConstructor(clazz, *parameterTypes, newMethodAfter(after))
     }
 }
 
@@ -287,17 +236,7 @@ fun LoadPackageParam.findAndHookMethodDoNothing(
     vararg parameterTypes: Class<*>?
 ) {
     val clazz = XposedHelpers.findClassIfExists(className, classLoader) ?: return
-    runCatch {
-        val paramList = arrayListOf<Any?>()
-        val callback = XC_MethodReplacement.DO_NOTHING
-        if (parameterTypes.isNotEmpty()) {
-            for (any in parameterTypes) {
-                paramList.add(any)
-            }
-        }
-        paramList.add(callback)
-        XposedHelpers.findAndHookMethod(clazz, methodName, *paramList.toArray())
-    }
+    findAndHookMethodInternal(clazz, methodName, parameterTypes, XC_MethodReplacement.DO_NOTHING)
 }
 
 inline fun LoadPackageParam.findAndHookMethodReplace(
@@ -307,28 +246,7 @@ inline fun LoadPackageParam.findAndHookMethodReplace(
     crossinline replace: ((XC_MethodHook.MethodHookParam) -> Any?),
 ) {
     val clazz = XposedHelpers.findClassIfExists(className, classLoader) ?: return
-    runCatch {
-        val paramList = arrayListOf<Any?>()
-        val callback = object : XC_MethodReplacement() {
-            override fun replaceHookedMethod(param: MethodHookParam?): Any? {
-                try {
-                    if (param != null) {
-                        return replace(param)
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-                return null
-            }
-        }
-        if (parameterTypes.isNotEmpty()) {
-            for (any in parameterTypes) {
-                paramList.add(any)
-            }
-        }
-        paramList.add(callback)
-        XposedHelpers.findAndHookMethod(clazz, methodName, *paramList.toArray())
-    }
+    findAndHookMethodInternal(clazz, methodName, parameterTypes, newMethodReplace(replace))
 }
 
 
@@ -345,7 +263,7 @@ fun String.invokeStaticMethodByName(methodName: String, vararg args: Any?): Any?
     try {
         return findClass(this, classLoader)?.invokeStaticMethodByName(methodName, *args)
     } catch (e: Exception) {
-        e.printStackTrace()
+        Timber.tag("Exception").e(e)
         return null
     }
 }
@@ -354,7 +272,7 @@ fun Class<*>.invokeStaticMethodByName(methodName: String, vararg args: Any?): An
     try {
         return XposedHelpers.callStaticMethod(this, methodName, *args)
     } catch (e: Exception) {
-        e.printStackTrace()
+        Timber.tag("Exception").e(e)
         return null
     }
 }
@@ -366,7 +284,7 @@ fun Any?.invokeMethodByName(methodName: String, vararg args: Any?): Any? {
         }
         return XposedHelpers.callMethod(this, methodName, *args)
     } catch (e: Exception) {
-        e.printStackTrace()
+        Timber.tag("Exception").e(e)
         return null
     }
 }
@@ -375,7 +293,7 @@ inline fun <reified T> Any?.getObjectField(fieldName: String): T? {
     try {
         return XposedHelpers.getObjectField(this, fieldName) as? T
     } catch (e: Exception) {
-        e.printStackTrace()
+        Timber.tag("Exception").e(e)
         return null
     }
 }

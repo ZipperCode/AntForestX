@@ -1,7 +1,6 @@
 package org.xposed.antforestx.core.bean.record
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonObject
 
 /**
  * 蚂蚁记录
@@ -13,12 +12,16 @@ import kotlinx.serialization.json.JsonObject
  * @param manorRecord 庄园记录
  *
  * @param consumeGold 消耗金币
+ * @param creditPoints 信用积分
+ * @param totalVitalityAmount 总共活力值
  */
 @Serializable
 data class AntRecord(
     val userId: String = "",
     val energyStatistics: AntEnergyStatistics = AntEnergyStatistics(),
     val forestDayRecord: AntForestDayRecord = AntForestDayRecord(),
-    val manorRecord: AntManorRecord = AntManorRecord(),
-    val consumeGold: Long = 0
+    val manorRecord: AntManorDayRecord = AntManorDayRecord(),
+    val consumeGold: Long = 0,
+    val creditPoints: Int = 0,
+    val totalVitalityAmount: Int = 0
 )

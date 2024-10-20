@@ -2,6 +2,7 @@ package org.xposed.antforestx.core.constant
 
 object ClassMember {
     const val PACKAGE_NAME: String = "com.eg.android.AlipayGphone"
+    const val LAUNCH_SERVICE = "com.alipay.mobile.common.job.JobService"
     const val CURRENT_USING_ACTIVITY: String = "com.eg.android.AlipayGphone.AlipayLogin"
     const val CURRENT_USING_SERVICE: String = "com.alipay.dexaop.power.RuntimePowerService"
     const val com_alipay_mobile_nebulaappproxy_api_rpc_H5AppRpcUpdate: String = "com.alipay.mobile.nebulaappproxy.api.rpc.H5AppRpcUpdate"

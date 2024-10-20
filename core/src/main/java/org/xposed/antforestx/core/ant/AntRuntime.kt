@@ -3,29 +3,49 @@ package org.xposed.antforestx.core.ant
 import android.app.Application
 import android.app.Service
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam
+import kotlinx.coroutines.delay
 import org.xposed.antforestx.core.constant.ClassMember
 import org.xposed.antforestx.core.hooker.H5AppRpcUpdate
-import org.xposed.antforestx.core.hooker.H5RpcUtilHooker
 import org.xposed.antforestx.core.hooker.LauncherActivityHooker
-import org.xposed.antforestx.core.hooker.PedometerAgent
+import org.xposed.antforestx.core.hooker.PedometerAgentHooker
+import org.xposed.antforestx.core.hooker.RpcServiceHooker
 import org.xposed.antforestx.core.hooker.ServiceHooker
+import org.xposed.antforestx.core.hooker.SocialSdkContactServiceHooker
 import org.xposed.antforestx.core.hooker.UserIndependentCacheHooker
-import org.xposed.antforestx.core.tasks.AntForestNotification
-import org.xposed.antforestx.core.util.Logger
+import org.xposed.antforestx.core.manager.ConfigManager
+import org.xposed.antforestx.core.manager.DataInfoManager
+import org.xposed.antforestx.core.manager.UserManager
+import org.xposed.antforestx.core.tasks.AntForestTask
+import org.xposed.antforestx.core.tasks.AntManorTask
+import org.xposed.antforestx.core.tasks.AntMemberTask
+import org.xposed.antforestx.core.tasks.AntOceanTask
+import org.xposed.antforestx.core.tasks.ITask
+import org.xposed.antforestx.core.util.AntForestNotification
+import org.xposed.antforestx.core.util.AntToast
+import org.xposed.antforestx.core.util.CoroutineHelper
 import org.xposed.antforestx.core.util.findAndHookMethodAfter
+import timber.log.Timber
+
 
 object AntRuntime {
 
-    var packageName = ""
-        private set
-    var processName = ""
-        private set
+    private val logger get() = Timber.tag("AntRuntime")
+
+    private var packageName = ""
+    private var processName = ""
 
     lateinit var classLoader: ClassLoader
 
-    val isMainProgress get() = packageName == processName
+    private val isMainProgress get() = packageName == processName
 
     private var hasInit = false
+
+    private val tasks: List<ITask> = listOf(
+        AntForestTask(),
+        AntOceanTask(),
+        AntMemberTask(),
+        AntManorTask()
+    )
 
     fun init(param: LoadPackageParam) {
         if (hasInit) {
@@ -36,10 +56,34 @@ object AntRuntime {
         classLoader = param.classLoader
 
         if (isMainProgress) {
-            Logger.d("【AntRuntime】init package = %s, process = %s", packageName, processName)
+            logger.d("init package = %s, process = %s", packageName, processName)
             findAndHookMethodAfter(Application::class.java, "onCreate") {
-                Logger.d("【AntRuntime】Application.onCreate(%s)", it.thisObject)
+                logger.d("Application.onCreate(%s)", it.thisObject)
+                CoroutineHelper.launch {
+                    ConfigManager.init()
+                }
+                CoroutineHelper.launch {
+                    UserManager.init()
+                }
+                CoroutineHelper.launch {
+                    DataInfoManager.init()
+                }
                 initHooker(param)
+                CoroutineHelper.launch {
+                    delay(5_000)
+                    logger.i("任务开始 packageName = %s packageName = %s", packageName, processName)
+                    AntToast.forceShow("任务开始")
+//                    AntWorkScheduler.setAlarm7(it.thisObject as Context)
+                    for (task in tasks) {
+                        if (ConfigManager.getConfig().basicConfig.isParallel) {
+                            CoroutineHelper.launch {
+                                task.start()
+                            }
+                        } else {
+                            task.start()
+                        }
+                    }
+                }
             }
 //            initHooker(param)
         }
@@ -49,63 +93,41 @@ object AntRuntime {
     private fun initHooker(loadPackageParam: LoadPackageParam) {
         // 版本
         H5AppRpcUpdate.matchVersion().replace(loadPackageParam) {
-            Logger.d("【AntRuntime】H5AppRpcUpdate.matchVersion()")
+            logger.d("H5AppRpcUpdate.matchVersion()")
             return@replace false
         }.onFailure {
-            Logger.e("【AntRuntime】H5AppRpcUpdate.matchVersion()", it)
+            logger.e(it, "H5AppRpcUpdate.matchVersion()")
         }.onSuccess {
-            Logger.d("【AntRuntime】H5AppRpcUpdate.matchVersion() success")
+            logger.d("H5AppRpcUpdate.matchVersion() success")
         }
 
         // 步数
-        PedometerAgent.readDailyStep().after { param ->
-            // 读取日步数
-            Logger.d("【AntRuntime】PedometerAgent.readDailyStep() => %s", param.result)
-        }.hook(loadPackageParam).onSuccess {
-            Logger.d("【AntRuntime】PedometerAgent.readDailyStep() success")
-        }.onFailure {
-            Logger.e("【AntRuntime】PedometerAgent.readDailyStep()", it)
-        }
+        PedometerAgentHooker.hookReadDailyStep(loadPackageParam)
+        UserIndependentCacheHooker.hookInit(loadPackageParam)
+        SocialSdkContactServiceHooker.hookOnCreate(loadPackageParam)
         hookService(loadPackageParam)
-        H5RpcUtilHooker.printMethods()
 
-        H5RpcUtilHooker.rpcCall13().before { param ->
-            Logger.d("【AntRuntime】H5RpcUtilHooker.rpcCall13() => %s", param.args.contentToString())
-        }.after { param ->
-            Logger.d("【AntRuntime】H5RpcUtilHooker.rpcCall13() => %s", param.result)
-        }.hook(loadPackageParam).onSuccess {
-            Logger.d("【AntRuntime】H5RpcUtilHooker.rpcCall13() success")
-        }.onFailure {
-            Logger.e("【AntRuntime】H5RpcUtilHooker.rpcCall13()", it)
-        }
+        RpcServiceHooker.hookGetRpcProxy(loadPackageParam)
 
-        H5RpcUtilHooker.executeRpc().before { param ->
-            Logger.d("【AntRuntime】H5RpcUtilHooker.executeRpc() => %s", param.args.contentToString())
-        }.hook(loadPackageParam).onSuccess {
-            Logger.d("【AntRuntime】H5RpcUtilHooker.executeRpc() success")
-        }.onFailure {
-            Logger.e("【AntRuntime】H5RpcUtilHooker.executeRpc()", it)
-        }
     }
 
     private fun hookService(loadPackageParam: LoadPackageParam) {
-        LauncherActivityHooker.onCreate().after { param ->
-            Logger.d("【AntRuntime】LauncherActivityHooker.onCreate() => %s", param.thisObject)
-        }.hook(loadPackageParam).onSuccess {
-            Logger.d("【AntRuntime】LauncherActivityHooker.onCreate() success")
-        }.onFailure {
-            Logger.e("【AntRuntime】LauncherActivityHooker.onCreate()", it)
-        }
+//        LauncherActivityHooker.onCreate().after { param ->
+//            logger.d("LauncherActivityHooker.onCreate() => %s", param.thisObject)
+//        }.hook(loadPackageParam).onSuccess {
+//            logger.d("LauncherActivityHooker.onCreate() success")
+//        }.onFailure {
+//            logger.e(it, "LauncherActivityHooker.onCreate()")
+//        }
         // 服务
         LauncherActivityHooker.onResume().after { param ->
-            Logger.d("【AntRuntime】LauncherActivityHooker.onResume() => %s", param.thisObject)
+            logger.d("LauncherActivityHooker.onResume() => %s", param.thisObject)
             val userId = RpcUtil.getUserId() ?: return@after
-            Logger.d("【AntRuntime】LauncherActivityHooker.onResume() userId => %s", userId)
-            UserIndependentCacheHooker.getAllFriends()
+            logger.d("LauncherActivityHooker.onResume() userId => %s", userId)
         }.hook(loadPackageParam).onSuccess {
-            Logger.d("【AntRuntime】LauncherActivityHooker.onResume() success")
+            logger.d("LauncherActivityHooker.onResume() success")
         }.onFailure {
-            Logger.e("【AntRuntime】LauncherActivityHooker.onResume()", it)
+            logger.e(it, "LauncherActivityHooker.onResume()")
         }
 
         ServiceHooker.onCreate().after { param ->
@@ -113,14 +135,14 @@ object AntRuntime {
             if (ClassMember.CURRENT_USING_SERVICE != service.javaClass.canonicalName) {
                 return@after
             }
-            Logger.d("【AntRuntime】ServiceHooker.onCreate() => %s", param.thisObject)
+            logger.d("【AntRuntime】ServiceHooker.onCreate() => %s", param.thisObject)
             AntForestNotification.start(service)
             // AntForestNotification.setContentText("运行中...")
 
         }.hook(loadPackageParam).onSuccess {
-            Logger.d("【AntRuntime】ServiceHooker.onCreate() success")
+            logger.d("【AntRuntime】ServiceHooker.onCreate() success")
         }.onFailure {
-            Logger.e("【AntRuntime】ServiceHooker.onCreate()", it)
+            logger.e(it, "【AntRuntime】ServiceHooker.onCreate()")
         }
     }
 }

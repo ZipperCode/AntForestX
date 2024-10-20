@@ -10,6 +10,14 @@ object AntToast {
 
     private var toast: Toast? = null
 
+    fun forceShow(msg: String) {
+        CoroutineHelper.loopCoroutineScope.launch {
+            toast?.cancel()
+            toast = Toast.makeText(XposedHookEntry.application, msg, Toast.LENGTH_SHORT)
+            toast?.show()
+        }
+    }
+
     fun showShort(msg: String) {
         showToast(msg, Toast.LENGTH_SHORT)
     }

@@ -15,4 +15,5 @@ plugins {
     alias(libs.plugins.google.ksp) apply false
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.jetbrains.kotlin.serialization) apply false
+    alias(libs.plugins.protobuf) apply false
 }

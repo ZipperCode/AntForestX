@@ -16,6 +16,7 @@ import kotlinx.serialization.Serializable
  * @param protectedAncientTreeList 保护古数 value 为 cityCode
  * @param isProtectedEnergyBubble 是否保护能量气泡
  * @param isSyncStep 当日是否同步步数
+ * @param todayStepNum 当日步数
  * @param isDonateStep 当日是否捐赠步数
  * @param isExchangedDoubleCard 是否兑换双卡
  * @param exchangedDoubleCardCount 已兑换双卡次数
@@ -32,6 +33,7 @@ data class AntForestDayRecord(
     val protectedAncientTreeList: List<String> = emptyList(),
     val isProtectedEnergyBubble: Boolean = false,
     val isSyncStep: Boolean = false,
+    val todayStepNum: Int = 0,
     val isDonateStep: Boolean = false,
     val isExchangedDoubleCard: Boolean = false,
     val exchangedDoubleCardCount: Int = 0,

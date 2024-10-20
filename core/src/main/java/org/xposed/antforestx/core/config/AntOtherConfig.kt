@@ -21,6 +21,7 @@ import kotlinx.serialization.Serializable
  * @param enableGreenOperate 是否开启绿色操作
  * @param enableReadListenBook 是否开启阅读听书
  * @param enableConsumeCoin 是否消费运动币
+ * @param enableGoldTicketSign 是否开启金券签到
  */
 @Serializable
 data class AntOtherConfig(
@@ -30,7 +31,7 @@ data class AntOtherConfig(
     val enableDonateMotionCoin: Boolean = false,
     val minDonateStepNum: Int = 0,
     val minDonateStepTime: Int = 21,
-    val customStepNum: Int = 10000,
+    val customStepNum: Int = 50000,
     val enableKouBeiSign: Boolean = true,
     val enableActionClockIn: Boolean = true,
     val enableCsCenter: Boolean = true,
@@ -40,4 +41,5 @@ data class AntOtherConfig(
     val enableGreenOperate: Boolean = true,
     val enableReadListenBook: Boolean = false,
     val enableConsumeCoin: Boolean = true,
+    val enableGoldTicketSign:Boolean = false
 )

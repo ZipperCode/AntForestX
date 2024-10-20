@@ -20,11 +20,11 @@ object ReserveRpcCall {
             "source" to "chInfo_ch_appcenter__chsub_9patch",
             "version" to VERSION2
         ).toListJson()
-        return RpcUtil.request("alipay.antforest.forest.h5.queryTreeItemsForExchange", json)
+        return RpcUtil.requestV2("alipay.antforest.forest.h5.queryTreeItemsForExchange", json)
     }
 
     suspend fun queryTreeForExchange(projectId: String): Result<JSONObject> {
-        return RpcUtil.request(
+        return RpcUtil.requestV2(
             "alipay.antforest.forest.h5.queryTreeForExchange",
             "[{\"projectId\":\"" + projectId + "\",\"version\":\"" + VERSION
                     + "\",\"source\":\"chInfo_ch_appcenter__chsub_9patch\"}]"
@@ -33,7 +33,7 @@ object ReserveRpcCall {
 
     suspend fun exchangeTree(projectId: String): Result<JSONObject> {
         val projectId_num = projectId.toInt()
-        return RpcUtil.request(
+        return RpcUtil.requestV2(
             "alipay.antmember.forest.h5.exchangeTree",
             "[{\"projectId\":" + projectId_num + ",\"sToken\":\"" + System.currentTimeMillis() + "\",\"version\":\""
                     + VERSION + "\",\"source\":\"chInfo_ch_appcenter__chsub_9patch\"}]"
@@ -46,11 +46,11 @@ object ReserveRpcCall {
             "source" to "ANT_FOREST",
             "version" to VERSION3
         ).toListJson()
-        return RpcUtil.request("alipay.antocean.ocean.h5.queryCultivationList", json)
+        return RpcUtil.requestV2("alipay.antocean.ocean.h5.queryCultivationList", json)
     }
 
     suspend fun queryCultivationDetail(cultivationCode: String, projectCode: String): Result<JSONObject> {
-        return RpcUtil.request(
+        return RpcUtil.requestV2(
             "alipay.antocean.ocean.h5.queryCultivationDetail",
             "[{\"cultivationCode\":\"" + cultivationCode + "\",\"projectCode\":\"" + projectCode
                     + "\",\"source\":\"ANT_FOREST\",\"uniqueId\":\"" + uniqueId + "\"}]"
@@ -58,7 +58,7 @@ object ReserveRpcCall {
     }
 
     suspend fun oceanExchangeTree(cultivationCode: String, projectCode: String): Result<JSONObject> {
-        return RpcUtil.request(
+        return RpcUtil.requestV2(
             "alipay.antocean.ocean.h5.exchangeTree",
             "[{\"cultivationCode\":\"" + cultivationCode + "\",\"projectCode\":\"" + projectCode
                     + "\",\"source\":\"ANT_FOREST\",\"uniqueId\":\"" + uniqueId + "\"}]"

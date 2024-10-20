@@ -1,8 +1,8 @@
 package org.xposed.antforestx.core.hooker
 
 import org.xposed.antforestx.core.bean.ClassMemberWrap
-import org.xposed.antforestx.core.util.Logger
 import org.xposed.antforestx.core.util.invokeMethodByName
+import timber.log.Timber
 
 object H5RpcUtilHooker {
 
@@ -80,6 +80,7 @@ object H5RpcUtilHooker {
 
     fun invokeRpcCall13(protocol: String, params: String): String {
         val response = rpcCallMethod13.invokeStatic(protocol, params, "", true, null, null, false, null, 0, "", false, -1, "")
+        Timber.tag("H5Rpc").d("response: %s", response)
         return response.invokeMethodByName("getResponse") as? String ?: ""
     }
 
@@ -97,7 +98,7 @@ object H5RpcUtilHooker {
     }
 
     fun printMethods() {
-        Logger.d("【AntRuntime】H5RpcUtilHooker printMethods")
+        Timber.d("【AntRuntime】H5RpcUtilHooker printMethods")
         wrap.printMethods()
     }
 }

@@ -4,5 +4,5 @@ interface ITask {
     /**
      * 启动任务
      */
-    fun start()
+    suspend fun start()
 }

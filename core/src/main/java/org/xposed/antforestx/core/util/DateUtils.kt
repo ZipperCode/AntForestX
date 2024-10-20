@@ -1,6 +1,10 @@
 package org.xposed.antforestx.core.util
 
+import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 /**
  *
@@ -22,5 +26,28 @@ object DateUtils {
 
     fun getDayOfWeek(): DayOfWeek {
         return DayOfWeek(Calendar.getInstance().get(Calendar.DAY_OF_WEEK))
+    }
+
+    /**
+     * 如 0700-0730 表示 7点到7点半
+     */
+    fun checkInTime(str: String): Boolean {
+        try {
+            val splits = str.split("-")
+            val start = splits[0].toInt() // 700
+            val end = splits[1].toInt() // 730
+            val calendar = Calendar.getInstance()
+            val hour = calendar.get(Calendar.HOUR_OF_DAY)
+            val minute = calendar.get(Calendar.MINUTE)
+            val currentValue = String.format(Locale.CHINA, "%02d%02d", hour, minute).toInt()
+            return currentValue in start..end
+        } catch (ignored: Exception) {
+            return false
+        }
+    }
+
+    // 获取年月日如20240921
+    fun getYearMonthDay(): String {
+        return SimpleDateFormat("yyyyMMdd", Locale.CHINA).format(Date())
     }
 }

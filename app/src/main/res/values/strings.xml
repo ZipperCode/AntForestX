@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">AntForestX</string>
+    <string name="app_destination_home_title">主页</string>
+    <string name="app_destination_logcat_title">日志</string>
+    <string name="app_destination_profile_title">设置</string>
+    <string name="app_dialog_confirm_text">确定</string>
+    <string name="app_dialog_setting_title">设置</string>
+
+    <string name="app_loading_content">加载中。。。</string>
+
+    <string name="app_dialog_setting_dynamic_color">是否使用动态颜色</string>
+
+    <string name="app_dialog_setting_theme_scheme_title">暗黑模式设置</string>
+    <string name="app_dialog_setting_theme_scheme_system">跟随系统</string>
+    <string name="app_dialog_setting_theme_scheme_light">正常模式</string>
+    <string name="app_dialog_setting_theme_scheme_dark">暗黑模式</string>
 </resources>

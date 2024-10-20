@@ -2,7 +2,6 @@ package org.xposed.antforestx.core.ant
 
 import kotlinx.serialization.json.JsonObject
 import org.json.JSONObject
-import org.xposed.antforestx.core.ant.RpcUtil.request
 
 /**
  * @author Constanline
@@ -10,14 +9,14 @@ import org.xposed.antforestx.core.ant.RpcUtil.request
  */
 object DadaDailyRpcCall {
     suspend fun home(activityId: String): Result<JSONObject> {
-        return request(
+        return RpcUtil.requestV2(
             "com.alipay.reading.game.dadaDaily.home",
             "[{\"activityId\":$activityId,\"dadaVersion\":\"1.3.0\",\"version\":1}]"
         )
     }
 
     suspend fun submit(activityId: String, answer: String, questionId: Long): Result<JSONObject> {
-        return request(
+        return RpcUtil.requestV2(
             "com.alipay.reading.game.dadaDaily.submit",
             "[{\"activityId\":" + activityId + ",\"answer\":\"" + answer + "\",\"dadaVersion\":\"1.3.0\",\"questionId\":" +
                     questionId + ",\"version\":1}]"

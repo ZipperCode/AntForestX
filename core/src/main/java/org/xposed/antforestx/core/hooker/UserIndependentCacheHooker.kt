@@ -1,10 +1,14 @@
 package org.xposed.antforestx.core.hooker
 
+import de.robv.android.xposed.callbacks.XC_LoadPackage
+import kotlinx.coroutines.delay
 import org.xposed.antforestx.core.bean.AlipayFriendBean
 import org.xposed.antforestx.core.bean.ClassMemberWrap
-import org.xposed.antforestx.core.util.Logger
 import org.xposed.antforestx.core.util.getObjectFieldOrDefault
 import org.xposed.antforestx.core.util.invokeMethodByName
+import timber.log.Timber
+import java.util.concurrent.atomic.AtomicBoolean
+
 
 object UserIndependentCacheHooker {
 
@@ -12,18 +16,44 @@ object UserIndependentCacheHooker {
 
     private val AliAccountDaoOpWrapType = ClassMemberWrap.type("com.alipay.mobile.socialcommonsdk.bizdata.contact.data.AliAccountDaoOp")
 
-    fun getAllFriends(): Result<List<AlipayFriendBean>> {
+    private val initCacheForCurrentUserMethod = ClassMemberWrap.method("initCacheForCurrentUser")
+
+    private val hasInit = AtomicBoolean(false)
+
+    fun hookInit(loadPackageParam: XC_LoadPackage.LoadPackageParam) {
+        if (hasInit.get()) {
+            Timber.tag("UserIndependentCacheHooker").d("initCacheForCurrentUser#hasInit")
+            return
+        }
+        wrap.method(initCacheForCurrentUserMethod).after {
+            Timber.tag("UserIndependentCacheHooker").d("initCacheForCurrentUser#after")
+            hasInit.set(true)
+        }.hook(loadPackageParam).onFailure {
+            Timber.tag("UserIndependentCacheHooker").e(it, "initCacheForCurrentUser#error")
+        }
+    }
+
+    private suspend fun validaInit() {
+        var count = 0
+        while (!hasInit.get() || count < 10) {
+            delay(500)
+            count++
+        }
+    }
+
+    suspend fun getAllFriends(): Result<List<AlipayFriendBean>> {
+        validaInit()
         return runCatching {
-            Logger.i("UserIndependentCacheHooker#getCacheObj")
+            Timber.i("UserIndependentCacheHooker#getCacheObj")
             val daoOpObject = wrap.invokeStaticMethodByName(
                 "getCacheObj",
                 AliAccountDaoOpWrapType.toClass()
             ) ?: throw NullPointerException("getCacheObj return null")
-            Logger.i("UserIndependentCacheHooker#daoOpObject = $daoOpObject")
+            Timber.i("UserIndependentCacheHooker#daoOpObject = $daoOpObject")
             val allFriends = daoOpObject.invokeMethodByName(
                 "getAllFriends"
             ) as? List<*> ?: throw NullPointerException("getAllFriends return null")
-            Logger.i("UserIndependentCacheHooker#allFriends = $allFriends")
+            Timber.i("UserIndependentCacheHooker#allFriends = $allFriends")
             val result = mutableListOf<AlipayFriendBean>()
             allFriends.forEach { friend ->
                 val userId = friend.getObjectFieldOrDefault<String>("userId", "")
@@ -39,11 +69,11 @@ object UserIndependentCacheHooker {
                 }
                 remarkName += "|$name"
                 result.add(AlipayFriendBean(userId, account, name, nickName, remarkName, accountType, phoneNo, phoneName))
-                Logger.d("UserIndependentCacheHooker# userId: $userId, account: $account, name: $name, nickName: $nickName, remarkName: $remarkName")
+                Timber.d("UserIndependentCacheHooker# userId: $userId, account: $account, name: $name, nickName: $nickName, remarkName: $remarkName")
             }
             return Result.success(result)
         }.onFailure {
-            Logger.e("UserIndependentCacheHooker#getCacheObj error", it)
+            Timber.e(it, "UserIndependentCacheHooker#getCacheObj error")
         }
     }
 }

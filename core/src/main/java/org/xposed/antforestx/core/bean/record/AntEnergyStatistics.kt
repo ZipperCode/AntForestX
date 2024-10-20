@@ -8,52 +8,39 @@ import kotlinx.serialization.Serializable
  *
  * @param allCollected 总共收取
  * @param weekCollected 本周收取
- * @param dayCollected 今天收取
  * @param startTime 开始时间
  */
 @Serializable
 data class AntEnergyStatistics(
     val allCollected: Int = 0,
-    val yearCollected: TimeStatistics = TimeStatistics(),
-    val weekCollected: TimeStatistics = TimeStatistics(),
-    val dayCollected: TimeStatistics = TimeStatistics(),
+    val yearCollected: TimeStatistics = TimeStatistics(CollectTimeType.YEAR),
+    val monthCollected: TimeStatistics = TimeStatistics(CollectTimeType.MONTH),
+    val weekCollected: TimeStatistics = TimeStatistics(CollectTimeType.WEEK),
     val startTime: Long = 0
 )
 
 @Serializable
 enum class CollectTimeType {
-    YEAR, WEEK, TODAY
-}
-
-/**
- * 数据类型 次数、收能量、助力、浇水
- */
-@Serializable
-enum class CollectDataType {
-    Collected, Helped, Watered
+    YEAR, MONTH,  WEEK, TODAY
 }
 
 /**
  * 收取时间数据
  * @param timeType 时间类型
- * @param collect 收集能量
- * @param help 助力
- * @param water 浇水
+ * @param collectEnergy 收集能量
+ * @param collectTimes 收集次数
+ * @param helpEnergy 助力能量
+ * @param helpTimes 助力次数
+ * @param waterValue 浇水值
+ * @param waterTimes 浇水次数
  */
 @Serializable
 data class TimeStatistics(
     val timeType: CollectTimeType = CollectTimeType.TODAY,
-    val collect: Detail = Detail(CollectDataType.Collected),
-    val help: Detail = Detail(CollectDataType.Helped),
-    val water: Detail = Detail(CollectDataType.Watered)
-)
-
-/**
- * 详情
- */
-@Serializable
-data class Detail(
-    val dataType: CollectDataType,
-    val times: Int = 0,
-    val value: Int = 0
+    val collectEnergy: Int = 0,
+    val collectTimes: Int = 0,
+    val helpEnergy: Int = 0,
+    val helpTimes: Int = 0,
+    val waterValue: Int = 0,
+    val waterTimes: Int = 0
 )

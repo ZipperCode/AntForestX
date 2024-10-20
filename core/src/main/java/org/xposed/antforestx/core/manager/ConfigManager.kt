@@ -1,8 +1,10 @@
 package org.xposed.antforestx.core.manager
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOn
 import org.xposed.antforestx.core.config.AntBasicConfig
 import org.xposed.antforestx.core.config.AntConfig
 import org.xposed.antforestx.core.config.AntForestConfig
@@ -22,9 +24,7 @@ object ConfigManager {
 
     val enableToast: Boolean get() = configFlow.value.basicConfig.showToast
 
-    val timeoutRestart: Boolean get() = configFlow.value.basicConfig.timeoutRestart
-
-    val isLimitForestCollect: Boolean get() = configFlow.value.forestConfig.enableCollectLimit
+    val isLimitForestCollect: Boolean get() = configFlow.value.forestConfig.isCollectLimit
 
     val limitCountInMinute: Int get() = configFlow.value.forestConfig.limitCountInMinute
 
@@ -32,9 +32,14 @@ object ConfigManager {
      * 保护古树
      *
      */
-    val enableAncientTree: Boolean get() = forestConfig.enableProtectAncientTree && isAncientTreeWeek
+    val enableAncientTree: Boolean get() = forestConfig.isProtectAncientTree && isAncientTreeWeek
 
     val enableBookRead get() = otherConfig.enableReadListenBook
+
+    /**
+     * 是否可以使用双击卡
+     */
+    val canUseDoubleProp get() = forestConfig.useDoubleProp && DateUtils.checkInTime(forestConfig.useDoublePropTime)
 
     fun getConfig(): AntConfig {
         return configFlow.value
@@ -45,7 +50,7 @@ object ConfigManager {
      */
     private val isAncientTreeWeek: Boolean
         get() {
-            if (!forestConfig.ancientTreeOnlyWeek) {
+            if (!forestConfig.isAncientTreeOnlyWeek) {
                 return true
             }
             val dayOfWeek = DateUtils.getDayOfWeek()
@@ -60,6 +65,7 @@ object ConfigManager {
             }
             configFlow
                 .distinctUntilChanged { old, new -> old == new }
+                .flowOn(Dispatchers.IO)
                 .collectLatest {
                     runCatching {
                         FileDataProvider.saveAntConfig(it)

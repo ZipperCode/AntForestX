@@ -5,92 +5,130 @@ import kotlinx.serialization.Serializable
 /**
  * 森林配置
  * @author zipper
- *
- * @param isCollectEnergy 是否收集能量
- * @param collectEnergyInterval 收集能量间隔
- * @param isCollectWateringBubble 是否收集浇水气泡
- * @param isBatchRobEnergy 是否批量抢能量
- * @param isCollectProp 是否收集道具
- * @param collectInterval 收集间隔
- * @param collectTimeout 收集超时时间
- * @param isForceCollect 是否强制收集
- * @param enableCollectLimit 是否限制收集数量
- * @param limitCountInMinute 限制收集数量
- * @param useDoubleProp 是否使用双倍道具
- * @param useDoublePropTime 使用双倍道具时间
- * @param useDoublePropLimit 使用双倍道具限制
- * @param noCollectUserList 不收集用户列表
- * @param isHelpFriendCollect 是否帮助好友收集
- * @param noHelpFriendList 不帮助好友列表
- * @param isReceiveForestTaskAward 是否领取森林任务奖励
- * @param waterFriendList 浇水好友列表
- * @param energyWaterEnum 能量浇水枚举
- * @param energyWaterFriendList 能量浇水好友列表
- * @param isCooperateWater 是否合种浇水
- * @param cooperateWaterList 合种浇水好友列表
- * @param cooperateWaterLimit 合种浇水限制
- * @param enableProtectAncientTree 是否收集古树
- * @param ancientTreeCityCodeList 古树城市列表
- * @param ancientTreeOnlyWeek 是否只收集本周古树
- * @param isCollectEnergyRain 是否收集能量雨
- * @param energyFriendRainList 能量雨好友列表
- * @param isExchangeEnergyDoubleClick 是否活力值兑换双击卡
- * @param isExchangeEnergyShield 是否兑换能量盾
- * @param giveFriendPropList 赠送好友道具列表
- * @param isExchangeProtectLand 是否兑换保护地
- * @param protectLandList 保护地列表
- * @param isMagicalSpeciesCard 是否开启神奇物种
- * @param sendFriendCard 赠送好友卡片列表
- * @param enableMagicalOcean 是否开启神奇海洋
- * @param enableProtectOcean 是否开启保护海洋
- * @param protectOceanList 保护海洋列表
- * @param enablePatrolForest 是否开启巡护森林
- * @param enableDispatchAnim 是否开启派遣动物
- * @param enablerReceiveGiftBox 是否开启领取礼盒
  */
 @Serializable
 data class AntForestConfig(
+    /**
+     * 是否收能量
+     */
     val isCollectEnergy: Boolean = true,
-    val collectEnergyInterval: Int = 10,
-    val isCollectWateringBubble: Boolean = true,
-    val isBatchRobEnergy: Boolean = true,
-    val isCollectProp: Boolean = true,
+    /**
+     * 收能量间隔
+     */
     val collectInterval: Long = 1000L,
-    val collectTimeout: Int = 2,
-    val isForceCollect: Boolean = false,
-    val enableCollectLimit: Boolean = true,
+    /**
+     * 是否收集浇水气泡
+     */
+    val isCollectWateringBubble: Boolean = true,
+    /**
+     * 是否批量抢能量
+     */
+    val isBatchRobEnergy: Boolean = true,
+    /**
+     * 是否收集道具
+     */
+    val isCollectProp: Boolean = true,
+    /**
+     * 是否收能量限制
+     */
+    val isCollectLimit: Boolean = true,
+    /**
+     * 每分钟限制收取
+     */
     val limitCountInMinute: Int = 50,
+    /**
+     * 是否使用双倍道具
+     */
     val useDoubleProp: Boolean = false,
+    /**
+     * 是否使用双倍道具时间
+     */
     val useDoublePropTime: String = "0700-0730",
-    val useDoublePropLimit: Int = 5,
+    /**
+     * 使用双击道具限制
+     */
+    val useDoublePropLimit: Int = 1,
+    /**
+     * 不收取用户列表
+     */
     val noCollectUserList: List<String> = emptyList(),
+    /**
+     * 是否帮助好友收集
+     */
     val isHelpFriendCollect: Boolean = true,
+    /**
+     * 不帮助好友列表
+     */
     val noHelpFriendList: List<String> = emptyList(),
-    val isReceiveForestTaskAward: Boolean = true,
+    /**
+     * 是否启用森林任务
+     */
+    val isEnableForestTask: Boolean = true,
+    /**
+     * 给好友浇水列表
+     */
     val waterFriendList: List<String> = emptyList(),
+    /**
+     * 浇水配置枚举
+     */
     val energyWaterEnum: EnergyWaterEnum = EnergyWaterEnum.None,
-    val energyWaterFriendList: List<String> = emptyList(),
-    val isCooperateWater: Boolean = false,
+    /**
+     * 是否启用合种浇水
+     */
+    val isEnableCooperateWater: Boolean = false,
+    /**
+     * 合种浇水好友列表
+     */
     val cooperateWaterList: List<String> = emptyList(),
+    /**
+     * 合种浇水限制
+     */
     val cooperateWaterLimit: Int = 0,
-    val enableProtectAncientTree: Boolean = false,
+    /**
+     * 是否保护古树
+     */
+    val isProtectAncientTree: Boolean = false,
+    /**
+     * 古树城市列表
+     */
     val ancientTreeCityCodeList: List<String> = emptyList(),
-    val ancientTreeOnlyWeek: Boolean = true,
+    /**
+     * 是否只收集本周古树
+     */
+    val isAncientTreeOnlyWeek: Boolean = true,
+    /**
+     * 是否收集能量雨
+     */
     val isCollectEnergyRain: Boolean = true,
+    /**
+     * 能量雨好友列表
+     */
     val energyFriendRainList: List<String> = emptyList(),
-    val isExchangeEnergyDoubleClick: Boolean = false,
+
+    /**
+     * 是否兑换双击卡
+     */
+    val isExchangeDoubleClickProp: Boolean = false,
+    /**
+     * 双击卡兑换限制
+     */
     val exchangeDoubleClickLimit: Int = 6,
-    val isExchangeEnergyShield: Boolean = false,
+    /**
+     * 是否兑换能量盾
+     */
+    val isExchangeEnergyShieldProp: Boolean = false,
+    /**
+     * 赠送好友道具列表
+     */
     val giveFriendPropList: List<String> = emptyList(),
-    val isExchangeProtectLand: Boolean = false,
-    val protectLandList: List<String> = emptyList(),
-    val isMagicalSpeciesCard: Boolean = false,
-    val sendFriendCard: List<String> = emptyList(),
-    val enableMagicalOcean: Boolean = true,
+    /**
+     * 是否开启保护海洋
+     */
     val enableProtectOcean: Boolean = true,
+    /**
+     * 保护海洋列表
+     */
     val protectOceanList: List<String> = emptyList(),
-    val enablePatrolForest: Boolean = true,
-    val enableDispatchAnim: Boolean = true,
     val enablerReceiveGiftBox: Boolean = true
 
 )
