@@ -1,6 +1,8 @@
 
 buildscript {
     repositories {
+        // Android Build Server
+        maven { url = uri("../antforestx-prebuilts/m2repository") }
         google()
         mavenCentral()
         maven("https://jitpack.io")

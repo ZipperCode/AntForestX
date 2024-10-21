@@ -1,5 +1,7 @@
 [versions]
 agp = "8.5.2"
+androidGradlePlugin = "8.5.2"
+antForestGradlePlugin = "1.0.0"
 kotlin = "2.0.10"
 ksp = "2.0.10-1.0.24"
 coreKtx = "1.13.1"
@@ -26,6 +28,13 @@ protobufPlugin = "0.9.4"
 
 koin = "3.5.6"
 [libraries]
+# build-logic convertion
+android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
+compose-gradlePlugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
+kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
+
+
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -80,5 +89,7 @@ google-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 protobuf = { id = "com.google.protobuf", version.ref = "protobufPlugin" }
 
-
+# 自定义插件
+antforestx-android-application = { id = "antforestx.android.application" }
+antforestx-android-library = { id = "antforestx.android.library" }
 

@@ -145,7 +145,6 @@ fun ProfileForestPageContent() {
         }
 
 
-
     }
     ProfileGroupCard(title = "浇水配置") {
         ProfileSwitchRow(title = "开启浇水", checked = true) {
@@ -201,13 +200,79 @@ fun ProfileForestPageContent() {
 @Composable
 fun ProfileManorPageContent() {
     ProfileGroupCard(title = "蚂蚁庄园配置") {
+        ProfileSwitchRow(title = "开启庄园", checked = true) {
 
+        }
+        ProfileSwitchRow(title = "打赏好友奖励", checked = true) {
+
+        }
+        ProfileSwitchRow(title = "可遣返小鸡", checked = true) {
+
+        }
+        ProfileSettingRow(title = "遣返小鸡类型")
+        ProfileSettingRow(title = "不遣返好友列表")
+        ProfileSwitchRow(title = "召回小鸡", checked = true) {
+
+        }
+        ProfileSettingRow(title = "召回小鸡类型")
+        ProfileSwitchRow(title = "收集道具奖励", checked = true) {
+
+        }
+        ProfileSwitchRow(title = "小鸡厨房", checked = true) {
+
+        }
+        ProfileSwitchRow(title = "使用特殊食物", checked = true) {
+
+        }
+        ProfileSwitchRow(title = "收取爱心鸡蛋", checked = true) {
+
+        }
+        ProfileSwitchRow(title = "捐蛋", checked = true) {
+
+        }
+        ProfileSettingRow(title = "捐蛋数量")
+
+        ProfileSwitchRow(title = "喂鸡", checked = true) {
+
+        }
+        ProfileSwitchRow(title = "使用加速卡", checked = true) {
+
+        }
+        ProfileSwitchRow(title = "帮助好友喂鸡", checked = true) {
+
+        }
+        ProfileSettingRow(title = "帮喂鸡好友列表")
+        ProfileSwitchRow(title = "送麦子", checked = true) {
+
+        }
+        ProfileSettingRow(title = "送麦子好友列表")
+
+        ProfileSwitchRow(title = "小鸡日记", checked = true) {
+
+        }
     }
     ProfileGroupCard(title = "做任务配置") {
+        ProfileSwitchRow(title = "做任务", checked = true) {
 
+        }
+        ProfileSwitchRow(title = "庄园小课堂", checked = true) {
+
+        }
     }
     ProfileGroupCard(title = "农场配置") {
+        ProfileSwitchRow(title = "开启农场", checked = true) {
 
+        }
+        ProfileSwitchRow(title = "收取奖励", checked = true) {
+
+        }
+        ProfileSettingRow(title = "施肥次数")
+        ProfileSwitchRow(title = "捉鸡", checked = true) {
+
+        }
+        ProfileSwitchRow(title = "做农场任务", checked = true) {
+
+        }
     }
 }
 
@@ -215,13 +280,31 @@ fun ProfileManorPageContent() {
 @Composable
 fun ProfileOtherPageContent() {
     ProfileGroupCard(title = "会员中心") {
+        ProfileSwitchRow(title = "会员签到", checked = true) {
 
+        }
+
+        ProfileSwitchRow(title = "执行积分任务", checked = true) {
+
+        }
+
+        ProfileSwitchRow(title = "收积分", checked = true) {
+
+        }
     }
     ProfileGroupCard(title = "步数") {
+        ProfileSwitchRow(title = "步数修改", checked = true) {
 
+        }
+        ProfileSettingRow(title = "自定义步数")
     }
     ProfileGroupCard(title = "商家服务") {
+        ProfileSwitchRow(title = "签到", checked = true) {
 
+        }
+        ProfileSwitchRow(title = "做任务", checked = true) {
+
+        }
     }
 }
 

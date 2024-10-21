@@ -1,4 +1,5 @@
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google {
             content {
@@ -19,6 +20,11 @@ dependencyResolutionManagement {
     }
 }
 
+// 模块访问
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 rootProject.name = "AntForestX"
 include(":app")
 include(":core")
+include(":model")
+include(":data")
