@@ -13,7 +13,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AntEnergyStatistics(
     val allCollected: Int = 0,
-    val yearCollected: TimeStatistics = TimeStatistics(CollectTimeType.YEAR),
+        val yearCollected: TimeStatistics = TimeStatistics(CollectTimeType.YEAR),
     val monthCollected: TimeStatistics = TimeStatistics(CollectTimeType.MONTH),
     val weekCollected: TimeStatistics = TimeStatistics(CollectTimeType.WEEK),
     val startTime: Long = 0

@@ -4,9 +4,6 @@ import android.app.Application
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.callbacks.XC_LoadPackage
-import org.xposed.antforestx.core.ant.AntRuntime
-import org.xposed.antforestx.core.hooker.RpcServiceHooker
-import org.xposed.antforestx.core.util.CoroutineHelper
 import org.xposed.antforestx.core.util.ModuleHelper
 import org.xposed.antforestx.core.util.getObjectField
 import org.xposed.antforestx.core.util.invokeStaticMethodByName

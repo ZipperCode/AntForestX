@@ -24,5 +24,9 @@ data class AntBasicConfig(
     /**
      * 是否并行执行任务
      */
-    val isParallel: Boolean = true
+    val isParallel: Boolean = true,
+    /**
+     * 状态栏通知
+     */
+    val showNotification: Boolean = true
 )

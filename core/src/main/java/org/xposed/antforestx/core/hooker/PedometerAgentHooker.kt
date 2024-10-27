@@ -20,6 +20,9 @@ object PedometerAgentHooker {
         wrap.method(readDailyStep).after { param ->
             // 读取日步数
             val originStep = param.result as Int
+            if (!ConfigManager.otherConfig.enableStep) {
+                return@after
+            }
             val customStep = ConfigManager.otherConfig.customStepNum
             if (originStep >= customStep) {
                 return@after

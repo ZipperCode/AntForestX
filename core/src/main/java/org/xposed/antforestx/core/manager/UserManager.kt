@@ -1,13 +1,13 @@
 package org.xposed.antforestx.core.manager
 
-import android.graphics.Bitmap.Config
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.withContext
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import org.xposed.antforestx.core.ant.RpcUtil
 import org.xposed.antforestx.core.bean.record.AntEnergyStatistics
 import org.xposed.antforestx.core.bean.record.AntForestDayRecord
@@ -15,11 +15,21 @@ import org.xposed.antforestx.core.bean.record.AntManorDayRecord
 import org.xposed.antforestx.core.bean.record.AntRecord
 import org.xposed.antforestx.core.hooker.UserIndependentCacheHooker
 import org.xposed.antforestx.core.util.FileDataProvider
+import org.zipper.antforestx.data.bean.AlipayUser
+import org.zipper.antforestx.data.repository.IAntConfigRepository
+import org.zipper.antforestx.data.repository.IAntDataRepository
+import org.zipper.antforestx.data.repository.IAntStatisticsRepository
 import java.util.Calendar
 
-object UserManager {
+object UserManager : KoinComponent {
 
-    private var friendIdMap: Map<String, String> = emptyMap()
+    private val dataRepository: IAntDataRepository by inject<IAntDataRepository>()
+
+    private val statisticsRepository: IAntStatisticsRepository by inject<IAntStatisticsRepository>()
+
+    private val configRepository: IAntConfigRepository by inject<IAntConfigRepository>()
+
+    private var alipayUserMap: Map<String, AlipayUser> = emptyMap()
 
     private val antRecordFlow = MutableStateFlow(AntRecord())
 
@@ -28,8 +38,6 @@ object UserManager {
     val energyStatistics: AntEnergyStatistics get() = antRecordFlow.value.energyStatistics
     val forestDayRecord: AntForestDayRecord get() = antRecordFlow.value.forestDayRecord
     val manorRecord: AntManorDayRecord get() = antRecordFlow.value.manorRecord
-
-    val canDoubleToday: Boolean get() = forestDayRecord.useDoubleClickCount < ConfigManager.forestConfig.useDoublePropLimit
 
     suspend fun init(): Result<Unit> {
         return runCatching {
@@ -50,6 +58,10 @@ object UserManager {
         }
     }
 
+    fun getAlipayUserName(userId: String): String {
+        return alipayUserMap[userId]?.friendNameInfo ?: ""
+    }
+
     fun updateNewRecord(newRecord: AntRecord) {
         antRecordFlow.value = newRecord
     }
@@ -64,12 +76,10 @@ object UserManager {
     /**
      * 双击卡使用次数+1
      */
-    fun updateDoubleClickUse() {
-        antRecordFlow.value = antRecord.copy(
-            forestDayRecord = forestDayRecord.copy(
-                useDoubleClickCount = forestDayRecord.useDoubleClickCount + 1
-            )
-        )
+    suspend fun updateDoubleClickUse() {
+        statisticsRepository.updateForest {
+            it.copy(useDoublePropCount = it.useDoublePropCount + 1)
+        }
     }
 
     /**
@@ -132,23 +142,16 @@ object UserManager {
         throw IllegalArgumentException("waitGetCurrentUid isnull")
     }
 
-    /**
-     * 获取所有好友信息，并保存
-     */
-    suspend fun hookLoadAllFriends() = withContext(Dispatchers.IO) {
-        var count = 0
-        val userId = waitGetCurrentUid()
-        do {
-            val result = UserIndependentCacheHooker.getAllFriends()
-            if (result.isSuccess) {
-                val dataList = result.getOrThrow()
-                friendIdMap = dataList.associate { it.userId to "${it.remarkName}(${it.account})" }
-                FileDataProvider.saveFriends(userId, dataList)
-                return@withContext
+    suspend fun initFriendsData() {
+        waitGetCurrentUid()
+        val result = UserIndependentCacheHooker.getFriendsMap()
+        if (result.isSuccess) {
+            val dataMap = result.getOrThrow()
+            alipayUserMap = HashMap(dataMap)
+            dataRepository.updateAlipayUserData {
+                dataMap
             }
-            delay(2000)
-            count++
-        } while (count < 3)
+        }
     }
 
 

@@ -45,6 +45,9 @@ android {
 
 dependencies {
     compileOnly(fileTree("dir" to "libs", "includes" to listOf("*.jar")))
+    implementation(projects.data)
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.timber)

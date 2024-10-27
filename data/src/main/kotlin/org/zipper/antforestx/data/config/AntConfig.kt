@@ -1,6 +1,7 @@
 package org.zipper.antforestx.data.config
 
 import kotlinx.serialization.Serializable
+import org.zipper.antforestx.data.serializer.BaseDataStoreSerializer
 
 /**
  * 配置
@@ -23,4 +24,13 @@ data class AntConfig(
      * 其他配置
      */
     val otherConfig: AntOtherConfig = AntOtherConfig()
-)
+) {
+    companion object {
+        val dsSerializer: BaseDataStoreSerializer<AntConfig> by lazy {
+            object : BaseDataStoreSerializer<AntConfig>(serializer()) {
+                override val defaultValue: AntConfig
+                    get() = AntConfig()
+            }
+        }
+    }
+}

@@ -3,8 +3,8 @@ package org.xposed.antforestx.core.bean
 import de.robv.android.xposed.XC_MethodHook.MethodHookParam
 import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam
-import org.xposed.antforestx.core.ant.AntRuntime
-import org.xposed.antforestx.core.ant.AntRuntime.classLoader
+import org.xposed.antforestx.core.AntRuntime
+import org.xposed.antforestx.core.AntRuntime.classLoader
 import org.xposed.antforestx.core.util.invokeStaticMethodByName
 import org.xposed.antforestx.core.util.newMethodHook
 import org.xposed.antforestx.core.util.newMethodReplace

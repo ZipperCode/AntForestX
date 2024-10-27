@@ -8,7 +8,6 @@ import org.json.JSONArray
 import org.json.JSONObject
 import org.xposed.antforestx.core.ant.AntFarmRpcCall
 import org.xposed.antforestx.core.ant.DadaDailyRpcCall
-import org.xposed.antforestx.core.bean.QuestionData
 import org.xposed.antforestx.core.manager.ConfigManager
 import org.xposed.antforestx.core.manager.DataInfoManager
 import org.xposed.antforestx.core.manager.UserManager
@@ -17,6 +16,7 @@ import org.xposed.antforestx.core.util.log.enableManor
 import org.xposed.antforestx.core.util.log.manor
 import org.xposed.antforestx.core.util.onSuccessCatching
 import org.xposed.antforestx.core.util.success
+import org.zipper.antforestx.data.bean.QuestionData
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import kotlin.math.log

@@ -1,32 +1,32 @@
 package org.xposed.antforestx.core.manager
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flowOn
-import org.xposed.antforestx.core.config.AntBasicConfig
-import org.xposed.antforestx.core.config.AntConfig
-import org.xposed.antforestx.core.config.AntForestConfig
-import org.xposed.antforestx.core.config.AntManorConfig
-import org.xposed.antforestx.core.config.AntOtherConfig
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import org.xposed.antforestx.core.util.DateUtils
-import org.xposed.antforestx.core.util.FileDataProvider
+import org.zipper.antforestx.data.config.AntBasicConfig
+import org.zipper.antforestx.data.config.AntConfig
+import org.zipper.antforestx.data.config.AntForestConfig
+import org.zipper.antforestx.data.config.AntManorConfig
+import org.zipper.antforestx.data.config.AntOtherConfig
+import org.zipper.antforestx.data.repository.IAntConfigRepository
 
-object ConfigManager {
+object ConfigManager: KoinComponent {
 
-    private val configFlow = MutableStateFlow(AntConfig())
+    private val iAntConfigRepository: IAntConfigRepository by inject<IAntConfigRepository>()
 
-    val basicConfig: AntBasicConfig get() = configFlow.value.basicConfig
-    val forestConfig: AntForestConfig get() = configFlow.value.forestConfig
-    val manorConfig: AntManorConfig get() = configFlow.value.manorConfig
-    val otherConfig: AntOtherConfig get() = configFlow.value.otherConfig
+    private var config: AntConfig = AntConfig()
 
-    val enableToast: Boolean get() = configFlow.value.basicConfig.showToast
+    val basicConfig: AntBasicConfig get() = config.basicConfig
+    val forestConfig: AntForestConfig get() = config.forestConfig
+    val manorConfig: AntManorConfig get() = config.manorConfig
+    val otherConfig: AntOtherConfig get() = config.otherConfig
 
-    val isLimitForestCollect: Boolean get() = configFlow.value.forestConfig.isCollectLimit
+    val enableToast: Boolean get() = config.basicConfig.showToast
 
-    val limitCountInMinute: Int get() = configFlow.value.forestConfig.limitCountInMinute
+    val isLimitForestCollect: Boolean get() = config.forestConfig.isCollectLimit
+
+    val limitCountInMinute: Int get() = config.forestConfig.limitCountInMinute
 
     /**
      * 保护古树
@@ -34,7 +34,7 @@ object ConfigManager {
      */
     val enableAncientTree: Boolean get() = forestConfig.isProtectAncientTree && isAncientTreeWeek
 
-    val enableBookRead get() = otherConfig.enableReadListenBook
+    val enableBookRead get() = false
 
     /**
      * 是否可以使用双击卡
@@ -42,7 +42,7 @@ object ConfigManager {
     val canUseDoubleProp get() = forestConfig.useDoubleProp && DateUtils.checkInTime(forestConfig.useDoublePropTime)
 
     fun getConfig(): AntConfig {
-        return configFlow.value
+        return config
     }
 
     /**
@@ -57,20 +57,11 @@ object ConfigManager {
             return dayOfWeek.isMonday || dayOfWeek.isWednesday || dayOfWeek.isFriday
         }
 
-    suspend fun init(): Result<Unit> {
-        return runCatching {
-            val config = FileDataProvider.loadAntConfig()
-            if (config != null) {
-                configFlow.value = config
+    suspend fun init() {
+        runCatching {
+            iAntConfigRepository.configFlow.collectLatest {
+                config = it
             }
-            configFlow
-                .distinctUntilChanged { old, new -> old == new }
-                .flowOn(Dispatchers.IO)
-                .collectLatest {
-                    runCatching {
-                        FileDataProvider.saveAntConfig(it)
-                    }
-                }
         }
     }
 }

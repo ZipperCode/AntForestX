@@ -6,6 +6,9 @@ import org.xposed.antforestx.core.bean.AlipayFriendBean
 import org.xposed.antforestx.core.bean.ClassMemberWrap
 import org.xposed.antforestx.core.util.getObjectFieldOrDefault
 import org.xposed.antforestx.core.util.invokeMethodByName
+import org.xposed.antforestx.core.util.moshi
+import org.zipper.antforestx.data.bean.AlipayUser
+import org.zipper.antforestx.data.bean.AlipayUserData
 import timber.log.Timber
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -41,37 +44,32 @@ object UserIndependentCacheHooker {
         }
     }
 
-    suspend fun getAllFriends(): Result<List<AlipayFriendBean>> {
+    suspend fun getFriendsMap(): Result<AlipayUserData> {
         validaInit()
         return runCatching {
-            Timber.i("UserIndependentCacheHooker#getCacheObj")
-            val daoOpObject = wrap.invokeStaticMethodByName(
-                "getCacheObj",
-                AliAccountDaoOpWrapType.toClass()
-            ) ?: throw NullPointerException("getCacheObj return null")
-            Timber.i("UserIndependentCacheHooker#daoOpObject = $daoOpObject")
-            val allFriends = daoOpObject.invokeMethodByName(
-                "getAllFriends"
-            ) as? List<*> ?: throw NullPointerException("getAllFriends return null")
-            Timber.i("UserIndependentCacheHooker#allFriends = $allFriends")
-            val result = mutableListOf<AlipayFriendBean>()
+            val userListData = AlipayUserData()
+            val daoOpObject = wrap.invokeStaticMethodByName("getCacheObj", AliAccountDaoOpWrapType.toClass())
+                ?: throw NullPointerException("getCacheObj return null")
+            val allFriends = daoOpObject.invokeMethodByName("getAllFriends") as? List<*>
+                ?: throw NullPointerException("getAllFriends return null")
+            Timber.d("UserIndependentCacheHooker#allFriends = %s", moshi.adapter(List::class.java).toJson(allFriends))
             allFriends.forEach { friend ->
                 val userId = friend.getObjectFieldOrDefault<String>("userId", "")
                 val account = friend.getObjectFieldOrDefault<String>("account", "")
                 val name = friend.getObjectFieldOrDefault<String>("name", "")
                 val nickName = friend.getObjectFieldOrDefault<String>("nickName", "")
+                val displayName = friend.getObjectFieldOrDefault<String>("displayName", "")
                 var remarkName = friend.getObjectFieldOrDefault<String>("remarkName", "")
-                val accountType = friend.getObjectFieldOrDefault<String>("accountType", "")
-                val phoneNo = friend.getObjectFieldOrDefault<String>("phoneNo", "")
-                val phoneName = friend.getObjectFieldOrDefault<String>("phoneName", "")
+                val blacked = friend.getObjectFieldOrDefault<Boolean>("blacked", false)
                 if (remarkName.isBlank()) {
                     remarkName = nickName
                 }
                 remarkName += "|$name"
-                result.add(AlipayFriendBean(userId, account, name, nickName, remarkName, accountType, phoneNo, phoneName))
-                Timber.d("UserIndependentCacheHooker# userId: $userId, account: $account, name: $name, nickName: $nickName, remarkName: $remarkName")
+                val item = AlipayUser(userId, account, name, nickName, displayName, blacked)
+                userListData[userId] = item
+                Timber.d("UserIndependentCacheHooker# AlipayUser = %s", item)
             }
-            return Result.success(result)
+            return Result.success(userListData)
         }.onFailure {
             Timber.e(it, "UserIndependentCacheHooker#getCacheObj error")
         }

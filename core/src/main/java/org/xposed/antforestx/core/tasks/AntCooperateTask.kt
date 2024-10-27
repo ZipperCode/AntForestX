@@ -22,7 +22,7 @@ class AntCooperateTask {
 
     suspend fun start() = withContext(Dispatchers.IO + CoroutineName("AntCooperate")) {
         logger.i("开始执行浇水任务")
-        if (!ConfigManager.forestConfig.isEnableCooperateWater) {
+        if (!ConfigManager.forestConfig.enableCooperateWater) {
             logger.w("浇水功能未开启")
             return@withContext
         }
@@ -56,7 +56,7 @@ class AntCooperateTask {
                     continue
                 }
                 // 不存在配置，不处理
-                ConfigManager.forestConfig.cooperateWaterList.firstOrNull { it == cooperationId } ?: continue
+                ConfigManager.forestConfig.cooperateTreeList.firstOrNull { it == cooperationId } ?: continue
                 var waterLimit = ConfigManager.forestConfig.cooperateWaterLimit
 
                 if (waterLimit > waterDayLimit) {

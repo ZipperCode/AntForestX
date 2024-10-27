@@ -1,4 +1,5 @@
 import com.android.build.api.dsl.ApplicationExtension
+import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
@@ -33,6 +34,10 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
 
                 composeOptions {
                     kotlinCompilerExtensionVersion = "1.5.3"
+                }
+                compileOptions {
+                    sourceCompatibility = JavaVersion.VERSION_17
+                    targetCompatibility = JavaVersion.VERSION_17
                 }
                 packaging {
                     resources {

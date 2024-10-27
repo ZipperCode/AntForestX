@@ -1,18 +1,14 @@
 package org.xposed.antforestx.core.util
 
 import android.os.Environment
-import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
 import org.xposed.antforestx.core.bean.AlipayFriendBean
 import org.xposed.antforestx.core.bean.CooperateInfoBean
-import org.xposed.antforestx.core.bean.QuestionData
-import org.xposed.antforestx.core.bean.QuestionMap
 import org.xposed.antforestx.core.bean.record.AntEnergyStatistics
 import org.xposed.antforestx.core.bean.record.AntRecord
-import org.xposed.antforestx.core.config.AntConfig
 import org.xposed.antforestx.core.manager.UserManager
 import timber.log.Timber
 import java.io.File
@@ -34,35 +30,6 @@ object FileDataProvider {
             file.mkdirs()
         }
         return@lazy file
-    }
-
-    /**
-     * 保存配置
-     */
-    suspend fun saveAntConfig(antConfig: AntConfig) = withContext(Dispatchers.IO) {
-        logger.d("保存配置文件")
-        saveJsonToFile("config/config.json", antConfig)
-    }
-
-    /**
-     * 读取配置
-     */
-    suspend fun loadAntConfig(): AntConfig? = withContext(Dispatchers.IO) {
-        logger.d("读取配置文件")
-        return@withContext loadJsonFromFile("config/config.json")
-    }
-
-    /**
-     * 获取好友信息，保存到 data/friends.json
-     */
-    suspend fun saveFriends(userId: String, friends: List<AlipayFriendBean>) = withContext(Dispatchers.IO) {
-        logger.d("保存好友信息")
-        saveJsonToFile("data/friends_$userId.json", friends)
-    }
-
-    suspend fun loadFriends(userId: String): List<AlipayFriendBean>? = withContext(Dispatchers.IO) {
-        logger.d("读取好友信息")
-        return@withContext loadJsonFromFile("data/friends_$userId.json")
     }
 
     /**
@@ -101,16 +68,6 @@ object FileDataProvider {
     suspend fun loadCooperate(userId: String): List<CooperateInfoBean> = withContext(Dispatchers.IO) {
         val file = File(requireUserDataFileDir(), "cooperate.json")
         return@withContext loadJsonFromFile(file) ?: emptyList<CooperateInfoBean>()
-    }
-
-    suspend fun saveQuestionCache(questionMap: QuestionMap) {
-        val file = File(requireUserRecordFileDir(), "question_cache.json")
-        saveJsonToFile(file, questionMap)
-    }
-
-    suspend fun loadQuestionCache(): QuestionMap? {
-        val file = File(requireUserRecordFileDir(), "question_cache.json")
-        return loadJsonFromFile(file)
     }
 
     private suspend fun requireUserDataFileDir(): File {

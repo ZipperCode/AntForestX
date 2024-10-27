@@ -2,6 +2,7 @@ package org.xposed.antforestx.core.ant
 
 import android.util.Log
 import de.robv.android.xposed.XposedHelpers
+import org.xposed.antforestx.core.AntRuntime
 import org.xposed.antforestx.core.util.findClass
 import org.xposed.antforestx.core.util.invokeMethodByName
 import org.xposed.antforestx.core.util.invokeStaticMethodByName

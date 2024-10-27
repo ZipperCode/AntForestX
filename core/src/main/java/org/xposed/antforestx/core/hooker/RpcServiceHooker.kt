@@ -1,7 +1,7 @@
 package org.xposed.antforestx.core.hooker
 
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam
-import org.xposed.antforestx.core.ant.AntRuntime.classLoader
+import org.xposed.antforestx.core.AntRuntime.classLoader
 import org.xposed.antforestx.core.bean.ClassMemberWrap
 import org.xposed.antforestx.core.util.newInvocation
 import timber.log.Timber

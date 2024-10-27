@@ -15,7 +15,6 @@ import org.xposed.antforestx.core.util.onSuccessCatching
 import org.xposed.antforestx.core.util.safeToInt
 import org.xposed.antforestx.core.util.success
 import timber.log.Timber
-import kotlin.math.log
 
 /**
  * 会员中心任务
@@ -26,24 +25,28 @@ class AntMemberTask : ITask {
     override suspend fun start(): Unit = withContext(Dispatchers.IO + CoroutineName("AntMember")) {
         Timber.enableMember()
         logger.i("开始处理会员中心积分任务")
-        if (!ConfigManager.otherConfig.enableCollectIntegral) {
-            logger.w("配置关闭，不处理会员终极积分任务")
-            return@withContext
-        }
         if (!UserManager.validateUser()) {
             return@withContext
         }
         runCatching {
-            // 签到日历
-            queryMemberSigninCalendar()
-            // 收取积分
-            queryPointCertV2()
-            // 逛一逛任务
-            queryAllStatusTaskList()
-            // 签到任务
-            signPageTaskList()
-            // 商家服务
-            merchantQuery()
+            if (ConfigManager.otherConfig.enableSign) {
+                // 签到日历
+                queryMemberSigninCalendar()
+            }
+            if (ConfigManager.otherConfig.enableCollectIntegral) {
+                // 收取积分
+                queryPointCertV2()
+            }
+            if (ConfigManager.otherConfig.enableIntegralTask) {
+                // 逛一逛任务
+                queryAllStatusTaskList()
+                // 签到任务
+                signPageTaskList()
+            }
+            if (ConfigManager.otherConfig.enableMerchant) {
+                // 商家服务
+                merchantQuery()
+            }
 
             // 黄金票
             goldIndex()
@@ -320,9 +323,6 @@ class AntMemberTask : ITask {
      * 黄金票签到
      */
     private suspend fun goldIndex() {
-        if (!ConfigManager.otherConfig.enableGoldTicketSign) {
-            return
-        }
 
         AntGoldRpcCall.index().onSuccessCatching {
             if (!it.getBoolean("success")) {
@@ -362,11 +362,15 @@ class AntMemberTask : ITask {
                 logger.e("查询商家任务列表失败: %s", it)
                 return@onSuccessCatching
             }
-            // 签到
-            merchantSignIn()
-            // 任务
-            merchantTask()
-            merchantTask()
+            if (ConfigManager.otherConfig.enableMerchantSign) {
+                // 签到
+                merchantSignIn()
+            }
+            if (ConfigManager.otherConfig.enableMerchantTask) {
+                // 任务
+                merchantTask()
+                merchantTask()
+            }
         }
         logger.i("商家服务任务执行完成")
     }

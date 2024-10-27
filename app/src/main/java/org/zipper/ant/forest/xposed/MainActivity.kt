@@ -5,64 +5,32 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.compose.NavHost
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.component.KoinComponent
 import org.zipper.ant.forest.xposed.enums.AppThemeScheme
-import org.zipper.ant.forest.xposed.navigation.HomeRoute
-import org.zipper.ant.forest.xposed.navigation.TopLevelDestination
-import org.zipper.ant.forest.xposed.navigation.homeScreen
-import org.zipper.ant.forest.xposed.navigation.logcatScreen
-import org.zipper.ant.forest.xposed.navigation.profileScreen
 import org.zipper.ant.forest.xposed.ui.AntForestXApp
-import org.zipper.ant.forest.xposed.ui.AppViewModel
-import org.zipper.ant.forest.xposed.ui.dialog.SettingDialog
-import org.zipper.ant.forest.xposed.ui.state.MainAppState
+import org.zipper.ant.forest.xposed.viewmodel.AppViewModel
 import org.zipper.ant.forest.xposed.ui.state.MainUIState
 import org.zipper.ant.forest.xposed.ui.state.rememberMainAppState
 import org.zipper.ant.forest.xposed.ui.theme.AntForestXTheme
-import org.zipper.ant.forest.xposed.ui.util.LocalAppViewModel
-import org.zipper.ant.forest.xposed.ui.util.LocalMainAppState
-import org.zipper.ant.forest.xposed.ui.util.LocalSnackbarHost
+import org.zipper.ant.forest.xposed.utils.PermissionCompat
 
 
-class MainActivity : ComponentActivity(), KoinComponent {
+class MainActivity : FragmentActivity(), KoinComponent {
 
     private val appViewModel: AppViewModel by viewModel<AppViewModel>()
 
@@ -79,7 +47,6 @@ class MainActivity : ComponentActivity(), KoinComponent {
                 }.collect()
             }
         }
-
         setContent {
             val darkTheme = shouldUseDarkTheme(uiState)
             DisposableEffect(darkTheme) {

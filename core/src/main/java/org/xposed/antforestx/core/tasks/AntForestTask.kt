@@ -7,10 +7,9 @@ import kotlinx.coroutines.delay
 import org.json.JSONArray
 import org.json.JSONObject
 import org.xposed.antforestx.core.ant.AntForestRpcCall
-import org.xposed.antforestx.core.bean.LabelType
-import org.xposed.antforestx.core.bean.VitalityExchangeInfo
 import org.xposed.antforestx.core.manager.ConfigManager
 import org.xposed.antforestx.core.manager.DataInfoManager
+import org.xposed.antforestx.core.manager.RecordManager
 import org.xposed.antforestx.core.manager.UserManager
 import org.xposed.antforestx.core.util.AntToast
 import org.xposed.antforestx.core.util.CoroutineHelper
@@ -22,6 +21,11 @@ import org.xposed.antforestx.core.util.onSuccessCatching
 import org.xposed.antforestx.core.util.runCatchSuspend
 import org.xposed.antforestx.core.util.runCatchSuspendResult
 import org.xposed.antforestx.core.util.success
+import org.zipper.antforestx.data.bean.AntForestPropData
+import org.zipper.antforestx.data.bean.AntForestPropInfo
+import org.zipper.antforestx.data.bean.LabelType
+import org.zipper.antforestx.data.bean.VitalityExchangedPropData
+import org.zipper.antforestx.data.bean.VitalityPropInfo
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
@@ -35,7 +39,7 @@ class AntForestTask : ITask {
 
     private val logger get() = Timber.antForest()
 
-    private var propList = ArrayList<PropInfo>()
+    private var propList = ArrayList<AntForestPropInfo>()
 
     /**
      * 双击卡结束时间
@@ -59,7 +63,7 @@ class AntForestTask : ITask {
 
         // 找能量
         takeEnergy()
-
+        updatePopList()
 //        // 查询动态
 //        queryDynamicsIndex()
         job.cancel()
@@ -78,7 +82,7 @@ class AntForestTask : ITask {
                 logger.e("查询首页失败 %s", it)
                 return@onSuccessCatching
             }
-            handleEnergyHome(it, false)
+            enterEnergyHome(it, false)
         }
         logger.i("收取自身能量完成")
     }
@@ -87,9 +91,11 @@ class AntForestTask : ITask {
      * 找能量
      */
     private suspend fun takeEnergy() {
-        if (!ConfigManager.forestConfig.isCollectEnergy) {
+        if (!ConfigManager.forestConfig.enableCollectFriends) {
+            logger.d("不收取好友能量")
             return
         }
+
         val hasMoreUser = AtomicBoolean(true)
         while (hasMoreUser.get()) {
             AntForestRpcCall.takeLook().onSuccessCatching {
@@ -109,7 +115,7 @@ class AntForestTask : ITask {
                         logger.e("查询好友详情失败 %s", res)
                         return@HomePage
                     }
-                    handleEnergyHome(res, ConfigManager.forestConfig.isBatchRobEnergy)
+                    enterEnergyHome(res, ConfigManager.forestConfig.isBatchRobEnergy)
                 }
             }
 
@@ -131,8 +137,7 @@ class AntForestTask : ITask {
     }
 
 
-    private suspend fun handleEnergyHome(homeJson: JSONObject, batchCollect: Boolean = true) {
-        val now = homeJson.getLong("now")
+    private suspend fun enterEnergyHome(homeJson: JSONObject, batchCollect: Boolean = true) {
         val userEnergy = homeJson.getJSONObject("userEnergy")
         val userId = userEnergy.getString("userId")
         val canCollectEnergy = userEnergy.getBoolean("canCollectEnergy")
@@ -196,14 +201,14 @@ class AntForestTask : ITask {
     }
 
     private suspend fun handleCollectEnergy(task: CollectTaskInfo) {
-        if (ConfigManager.forestConfig.noCollectUserList.contains(task.userId)) {
+        if (ConfigManager.forestConfig.unCollectFriendList.contains(task.userId)) {
             logger.i("不偷取[%s]的能量", DataInfoManager.getFriendById(task.userId))
             return
         }
         var useDoubleCard = false
         if (ConfigManager.canUseDoubleProp) {
             updateDoubleTime()
-            if (doubleEndTime < System.currentTimeMillis() && UserManager.canDoubleToday) {
+            if (doubleEndTime < System.currentTimeMillis() && RecordManager.canUseDoublePropToday()) {
                 // 双击卡过期且可以使用
                 useDoubleCard()
                 useDoubleCard = true
@@ -247,18 +252,21 @@ class AntForestTask : ITask {
         }
     }
 
+    /**
+     * 批量收取
+     */
     private suspend fun handleBatchCollectEnergy(userId: String, bubbleIds: List<Long>, doubleClick: Boolean = false): Int {
-        if (ConfigManager.forestConfig.noCollectUserList.contains(userId)) {
+        if (ConfigManager.forestConfig.unCollectFriendList.contains(userId)) {
             logger.i("不偷取[%s]的能量", DataInfoManager.getFriendById(userId))
             return 0
         }
         if (bubbleIds.isEmpty()) {
             return 0
         }
-        logger.i("一键收取[%s]能量", DataInfoManager.getFriendById(userId))
+        logger.i("一键收取[%s]能量", UserManager.getAlipayUserName(userId))
         if (ConfigManager.canUseDoubleProp) {
             updateDoubleTime()
-            if (doubleEndTime < System.currentTimeMillis() && UserManager.canDoubleToday) {
+            if (doubleEndTime < System.currentTimeMillis() && RecordManager.canUseDoublePropToday()) {
                 // 双击卡过期且可以使用
                 useDoubleCard()
             }
@@ -395,20 +403,6 @@ class AntForestTask : ITask {
         }
     }
 
-    /**
-     * 任务弹窗
-     */
-    suspend fun popupTask() {
-        AntForestRpcCall.popupTask().onSuccess { json ->
-            if (!json.isSuccess()) {
-                logger.e("获取任务列表失败 %s", json)
-                return@onSuccess
-            }
-
-        }
-    }
-
-
     private val collectTaskChannel = Channel<suspend () -> Unit>(Channel.UNLIMITED)
     private val executeTaskCount = AtomicInteger(0)
 
@@ -459,6 +453,10 @@ class AntForestTask : ITask {
      * 活力值任务
      */
     private suspend fun queryTaskList() {
+        if (!ConfigManager.forestConfig.enableForestTask) {
+            logger.d("森林任务未启用")
+            return
+        }
         AntForestRpcCall.queryTaskList().onSuccessCatching { json ->
             if (!json.isSuccess()) {
                 logger.e("查询任务列表失败 %s", json)
@@ -570,8 +568,8 @@ class AntForestTask : ITask {
     /**
      * 更新活力值兑换的道具列表
      */
-    private suspend fun updateExchangedPropList(): List<VitalityExchangeInfo> {
-        val propList = ArrayList<VitalityExchangeInfo>()
+    private suspend fun updateExchangedPropList() {
+        val propList = VitalityExchangedPropData()
         for (entry in LabelType.entries) {
             AntForestRpcCall.itemList(entry.label).onSuccessCatching {
                 if (!it.success) {
@@ -588,7 +586,7 @@ class AntForestTask : ITask {
                     val priceJson = itemInfoVO.optJSONObject("price") ?: continue
                     val amount = priceJson.optDouble("amount")
                     val priceCent = priceJson.optLong("cent")
-                    val prop = VitalityExchangeInfo(entry, skuId, spuId, rightsConfigId, skuName, amount, priceCent)
+                    val prop = VitalityPropInfo(entry, skuId, spuId, rightsConfigId, skuName, amount, priceCent)
                     propList.add(prop)
                 }
             }
@@ -597,7 +595,6 @@ class AntForestTask : ITask {
         // 更新道具列表到本地
         DataInfoManager.updateVitalityInfo(propList)
 
-        return propList
     }
 
     /**
@@ -703,7 +700,7 @@ class AntForestTask : ITask {
         AntForestRpcCall.queryPropList(false).onSuccessCatching {
             if (it.success) {
                 val forestPropVOList = it.getJSONArray("forestPropVOList")
-                val list = ArrayList<PropInfo>(forestPropVOList.length())
+                val list = AntForestPropData(forestPropVOList.length())
                 for (i in 0 until forestPropVOList.length()) {
                     val prop = forestPropVOList.getJSONObject(i)
                     val propType = prop.getString("propType")
@@ -714,8 +711,9 @@ class AntForestTask : ITask {
                     val propConfigVO = prop.getJSONObject("propConfigVO")
                     val propName = propConfigVO.getString("propName")
                     val durationTime = propConfigVO.getLong("durationTime")
-                    list.add(PropInfo(propType, propName, durationTime, holdsNum, propGroup, propIdList, recentExpireTime))
+                    list.add(AntForestPropInfo(propType, propName, durationTime, holdsNum, propGroup, propIdList, recentExpireTime))
                 }
+                DataInfoManager.updateForestPropData(list)
                 propList = list
             }
         }
@@ -784,6 +782,7 @@ class AntForestTask : ITask {
     }
 
     private suspend fun appendEnergy(count: Int) {
+        RecordManager.addEnergy(count)
     }
 
     data class PropInfo(

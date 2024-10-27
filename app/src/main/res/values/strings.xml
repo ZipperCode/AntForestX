@@ -14,4 +14,7 @@
     <string name="app_dialog_setting_theme_scheme_system">跟随系统</string>
     <string name="app_dialog_setting_theme_scheme_light">正常模式</string>
     <string name="app_dialog_setting_theme_scheme_dark">暗黑模式</string>
+
+    <string name="app_dialog_collect_interval_title">收取间隔</string>
+    <string name="app_dialog_collect_limit_title">收取限制</string>
 </resources>

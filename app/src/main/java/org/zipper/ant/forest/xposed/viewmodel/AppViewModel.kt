@@ -1,9 +1,12 @@
-package org.zipper.ant.forest.xposed.ui
+package org.zipper.ant.forest.xposed.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -14,6 +17,7 @@ import org.zipper.ant.forest.xposed.enums.AppThemeScheme
 import org.zipper.ant.forest.xposed.repostory.AppProfileRepository
 import org.zipper.ant.forest.xposed.ui.state.MainUIState
 import org.zipper.ant.forest.xposed.ui.state.SettingsUiState
+import org.zipper.ant.forest.xposed.utils.PermissionCompat
 
 /**
  *
@@ -24,7 +28,15 @@ class AppViewModel : ViewModel(), KoinComponent {
 
     private val appProfileRepository: AppProfileRepository by inject<AppProfileRepository>()
 
-    val uiState: StateFlow<MainUIState> = appProfileRepository.appProfileData
+    private val androidContext: Context by inject<Context>()
+
+    private val _storagePermissionState: MutableStateFlow<Boolean> by lazy {
+        MutableStateFlow(PermissionCompat.getPermissionStatus(androidContext))
+    }
+
+    val storagePermissionState: StateFlow<Boolean> get() = _storagePermissionState
+
+    val uiState: StateFlow<MainUIState> = appProfileRepository.appProfilePreference
         .map { MainUIState.Success(it) }
         .stateIn(
             scope = viewModelScope,
@@ -32,7 +44,7 @@ class AppViewModel : ViewModel(), KoinComponent {
             started = SharingStarted.WhileSubscribed(5_000),
         )
 
-    val appSettingsUiState: StateFlow<SettingsUiState> = appProfileRepository.appProfileData
+    val appSettingsUiState: StateFlow<SettingsUiState> = appProfileRepository.appProfilePreference
         .map { SettingsUiState.Success(AppSettingsData(it.useDynamicColor, it.themeScheme)) }
         .stateIn(
             scope = viewModelScope,
@@ -50,5 +62,9 @@ class AppViewModel : ViewModel(), KoinComponent {
         viewModelScope.launch {
             appProfileRepository.updateDarkThemeScheme(darkThemeScheme)
         }
+    }
+
+    fun onPermissionGranted(result: Boolean) {
+        _storagePermissionState.value = result
     }
 }

@@ -1,10 +1,23 @@
-package org.xposed.antforestx.core.bean
+package org.zipper.antforestx.data.bean
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.encoding.Encoder
-import org.xposed.antforestx.core.config.RecallChicksType
+import org.zipper.antforestx.data.serializer.BaseDataStoreSerializer
+
+
+@Serializable
+class VitalityExchangedPropData : ArrayList<VitalityPropInfo>() {
+    companion object {
+        val dsSerializer: BaseDataStoreSerializer<VitalityExchangedPropData> by lazy {
+            object : BaseDataStoreSerializer<VitalityExchangedPropData>(serializer()) {
+                override val defaultValue: VitalityExchangedPropData
+                    get() = VitalityExchangedPropData()
+            }
+        }
+    }
+}
 
 /**
  * 活力值兑换道具信息
@@ -15,7 +28,8 @@ import org.xposed.antforestx.core.config.RecallChicksType
  * @param skuName 道具名称
  * @param priceCent 道具价格(分/活力值)
  */
-data class VitalityExchangeInfo(
+@Serializable
+data class VitalityPropInfo(
     val labelType: LabelType,
     val skuId: String,
     val spuId: String,

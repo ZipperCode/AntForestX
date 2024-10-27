@@ -39,6 +39,7 @@ import org.zipper.ant.forest.xposed.ui.state.MainAppState
 import org.zipper.ant.forest.xposed.ui.util.LocalAppViewModel
 import org.zipper.ant.forest.xposed.ui.util.LocalMainAppState
 import org.zipper.ant.forest.xposed.ui.util.LocalSnackbarHost
+import org.zipper.ant.forest.xposed.viewmodel.AppViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

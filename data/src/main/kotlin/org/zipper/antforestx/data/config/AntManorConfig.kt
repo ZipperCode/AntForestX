@@ -1,6 +1,8 @@
 package org.zipper.antforestx.data.config
 
 import kotlinx.serialization.Serializable
+import org.zipper.antforestx.data.enums.RecallChicksType
+import org.zipper.antforestx.data.enums.RepatriateType
 
 /**
  * 蚂蚁庄园
@@ -104,6 +106,10 @@ data class AntManorConfig(
      * 启用小鸡日记
      */
     val enableChicksDiary: Boolean = true,
+    /**
+     * 是否做任务
+     */
+    val enableChicksTask: Boolean = true,
     /**
      * 启用农场
      */

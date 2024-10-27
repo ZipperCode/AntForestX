@@ -2,12 +2,10 @@ package org.zipper.ant.forest.xposed.ui.dialog
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -22,7 +20,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -38,7 +35,7 @@ import org.koin.androidx.compose.koinViewModel
 import org.zipper.ant.forest.xposed.R
 import org.zipper.ant.forest.xposed.data.AppSettingsData
 import org.zipper.ant.forest.xposed.enums.AppThemeScheme
-import org.zipper.ant.forest.xposed.ui.AppViewModel
+import org.zipper.ant.forest.xposed.viewmodel.AppViewModel
 import org.zipper.ant.forest.xposed.ui.state.SettingsUiState
 import org.zipper.ant.forest.xposed.ui.theme.supportsDynamicTheming
 

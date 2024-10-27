@@ -1,4 +1,4 @@
-package org.xposed.antforestx.core.config
+package org.zipper.antforestx.data.enums
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor

@@ -54,7 +54,8 @@ android {
 dependencies {
 
 //    implementation(project(":core"))
-
+    implementation(projects.core)
+    implementation(projects.data)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -87,6 +88,8 @@ dependencies {
     implementation(libs.koin.core)
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
+
+    implementation(libs.timber)
 
 //    implementation(libs.protobuf.kotlin.lite)
 }

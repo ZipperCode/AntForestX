@@ -382,7 +382,7 @@ class AntOceanTask : ITask {
         }
 
         val userId = fillFlagVO.getString("userId")
-        if (ConfigManager.forestConfig.noCollectUserList.contains(userId)) {
+        if (ConfigManager.forestConfig.unCollectFriendList.contains(userId)) {
             logger.i("跳过好友海洋清理 %s", userId)
         }
         AntOceanRpcCall.queryFriendPage(userId).onSuccess {
