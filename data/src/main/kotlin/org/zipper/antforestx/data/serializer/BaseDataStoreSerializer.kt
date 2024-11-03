@@ -27,11 +27,14 @@ abstract class BaseDataStoreSerializer<T>(
     override suspend fun writeTo(t: T, output: OutputStream) {
         try {
             val dataString = Json.encodeToString(jsonSerializer, t)
+            Timber.d("data = %s dataString = %s", t, dataString)
             output.bufferedWriter().use {
+                Timber.d("写入文件数据 = %s", dataString)
                 it.write(dataString)
             }
         } catch (e: Exception) {
             Timber.e(e)
+            throw e
         }
     }
 }

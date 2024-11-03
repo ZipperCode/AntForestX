@@ -1,21 +1,9 @@
 package org.zipper.antforestx.data.bean
 
 import kotlinx.serialization.Serializable
-import org.zipper.antforestx.data.serializer.BaseDataStoreSerializer
 
 
-@Serializable
-class AlipayUserData : HashMap<String, AlipayUser>() {
-
-    companion object {
-        val dsSerializer: BaseDataStoreSerializer<AlipayUserData> by lazy {
-            object : BaseDataStoreSerializer<AlipayUserData>(serializer()) {
-                override val defaultValue: AlipayUserData
-                    get() = AlipayUserData()
-            }
-        }
-    }
-}
+typealias AlipayUserData = HashMap<String, AlipayUser>
 
 
 @Serializable

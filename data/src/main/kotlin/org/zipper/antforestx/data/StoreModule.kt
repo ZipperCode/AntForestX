@@ -4,10 +4,8 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import org.koin.core.qualifier.Qualifier
 import org.koin.core.qualifier.QualifierValue
-import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
-import org.zipper.antforestx.data.bean.AlipayUserData
 import org.zipper.antforestx.data.bean.AntForestPropData
 import org.zipper.antforestx.data.bean.QuestionMap
 import org.zipper.antforestx.data.bean.VitalityExchangedPropData
@@ -20,12 +18,25 @@ import org.zipper.antforestx.data.repository.AntStatisticsRepository
 import org.zipper.antforestx.data.repository.IAntConfigRepository
 import org.zipper.antforestx.data.repository.IAntDataRepository
 import org.zipper.antforestx.data.repository.IAntStatisticsRepository
+import org.zipper.antforestx.data.serializer.AlipayUserDataSerializer
+import org.zipper.antforestx.data.serializer.AntForestPropDataSerializer
 import org.zipper.antforestx.data.serializer.BaseDataStoreSerializer
+import org.zipper.antforestx.data.serializer.BaseMoshiDataStoreSerializer
 import java.io.File
 
 
 private inline fun <reified T> createDataStore(
     dsSerializer: BaseDataStoreSerializer<T>,
+    noinline produceFile: () -> File
+): DataStore<T> {
+    return DataStoreFactory.create(
+        serializer = dsSerializer,
+        produceFile = produceFile
+    )
+}
+
+private inline fun <reified T> createDataStore(
+    dsSerializer: BaseMoshiDataStoreSerializer<T>,
     noinline produceFile: () -> File
 ): DataStore<T> {
     return DataStoreFactory.create(
@@ -65,13 +76,13 @@ val antDataModule = module {
         }
     }
     single(DataStoreType.AlipayUser) {
-        createDataStore(AlipayUserData.dsSerializer) {
+        createDataStore(AlipayUserDataSerializer()) {
             StoreFileProvider.requireAlipayUserDataFile()
         }
     }
 
     single(DataStoreType.ForestProp) {
-        createDataStore(AntForestPropData.dsSerializer) {
+        createDataStore(AntForestPropDataSerializer()) {
             StoreFileProvider.requireForestPropDataFile()
         }
     }

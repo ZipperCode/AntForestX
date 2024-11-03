@@ -20,6 +20,9 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 testOptions {
                     targetSdk = BuildConfig.TargetSdk
                 }
+                buildFeatures {
+                    buildConfig = true
+                }
 
                 buildTypes {
                     release {

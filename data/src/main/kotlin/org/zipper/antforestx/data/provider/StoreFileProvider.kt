@@ -11,6 +11,7 @@ import timber.log.Timber
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.nio.file.Files
 
 object StoreFileProvider : KoinComponent {
 
@@ -33,6 +34,7 @@ object StoreFileProvider : KoinComponent {
     }
 
     private val mainMediaDirectory: File by lazy {
+        // com.eg.android.AlipayGphone
         val mediaFile = File(Environment.getExternalStorageDirectory(), "Android/media/com.eg.android.AlipayGphone")
         if (!mediaFile.exists()) {
             mediaFile.mkdirs()

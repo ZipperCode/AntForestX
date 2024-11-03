@@ -1,19 +1,43 @@
 package org.zipper.antforestx.data.bean
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import org.zipper.antforestx.data.serializer.BaseDataStoreSerializer
 
 
-@Serializable
+@Serializable(with = VitalityExchangedPropData.Serializer::class)
 class VitalityExchangedPropData : ArrayList<VitalityPropInfo>() {
     companion object {
         val dsSerializer: BaseDataStoreSerializer<VitalityExchangedPropData> by lazy {
             object : BaseDataStoreSerializer<VitalityExchangedPropData>(serializer()) {
                 override val defaultValue: VitalityExchangedPropData
                     get() = VitalityExchangedPropData()
+            }
+        }
+    }
+
+    class Serializer : KSerializer<VitalityExchangedPropData> {
+        private val delegateSerializer = ListSerializer(VitalityPropInfo.serializer())
+
+        @OptIn(ExperimentalSerializationApi::class)
+        override val descriptor: SerialDescriptor
+            get() = SerialDescriptor("VitalityExchangedPropData", delegateSerializer.descriptor)
+
+        override fun serialize(encoder: Encoder, value: VitalityExchangedPropData) {
+            encoder.encodeSerializableValue(delegateSerializer, value)
+        }
+
+        override fun deserialize(decoder: Decoder): VitalityExchangedPropData {
+            decoder.decodeSerializableValue(delegateSerializer).let { list ->
+                return VitalityExchangedPropData().apply {
+                    addAll(list)
+                }
             }
         }
     }
@@ -65,7 +89,7 @@ enum class LabelType(val label: String) {
             kotlinx.serialization.descriptors.PrimitiveKind.STRING
         )
 
-        override fun deserialize(decoder: kotlinx.serialization.encoding.Decoder): LabelType {
+        override fun deserialize(decoder: Decoder): LabelType {
             val string = decoder.decodeString()
             return when (string) {
                 "SC_ASSETS" -> Prop

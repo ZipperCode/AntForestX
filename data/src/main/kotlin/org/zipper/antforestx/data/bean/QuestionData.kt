@@ -1,10 +1,17 @@
 package org.zipper.antforestx.data.bean
 
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.MapSerializer
+import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import org.zipper.antforestx.data.serializer.BaseDataStoreSerializer
 
 
-@Serializable
+@Serializable(with = QuestionMap.Serializer::class)
 class QuestionMap : HashMap<String, QuestionData>() {
 
     companion object {
@@ -13,6 +20,24 @@ class QuestionMap : HashMap<String, QuestionData>() {
                 override val defaultValue: QuestionMap
                     get() = QuestionMap()
             }
+        }
+    }
+
+    class Serializer() : KSerializer<QuestionMap> {
+
+        private val delegateSerializer = MapSerializer(String.serializer(), QuestionData.serializer())
+
+
+        @OptIn(ExperimentalSerializationApi::class)
+        override val descriptor: SerialDescriptor get() = SerialDescriptor("AlipayUserData", delegateSerializer.descriptor)
+
+        override fun serialize(encoder: Encoder, value: QuestionMap) {
+            encoder.encodeSerializableValue(delegateSerializer, value as Map<String, QuestionData>)
+        }
+
+        override fun deserialize(decoder: Decoder): QuestionMap {
+            val value = decoder.decodeSerializableValue(delegateSerializer)
+            return QuestionMap().apply { putAll(value) }
         }
     }
 }

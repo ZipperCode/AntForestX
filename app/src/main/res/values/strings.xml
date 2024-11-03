@@ -17,4 +17,6 @@
 
     <string name="app_dialog_collect_interval_title">收取间隔</string>
     <string name="app_dialog_collect_limit_title">收取限制</string>
+    <string name="app_dialog_double_prop_time_title">双击卡使用时段</string>
+    <string name="app_dialog_double_prop_limit_title">双击卡使用限制</string>
 </resources>

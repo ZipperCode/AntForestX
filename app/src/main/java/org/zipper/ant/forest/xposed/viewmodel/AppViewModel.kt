@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -15,7 +14,9 @@ import org.koin.core.component.inject
 import org.zipper.ant.forest.xposed.data.AppSettingsData
 import org.zipper.ant.forest.xposed.enums.AppThemeScheme
 import org.zipper.ant.forest.xposed.repostory.AppProfileRepository
+import org.zipper.ant.forest.xposed.ui.state.AntDialogUiState
 import org.zipper.ant.forest.xposed.ui.state.MainUIState
+import org.zipper.ant.forest.xposed.ui.state.None
 import org.zipper.ant.forest.xposed.ui.state.SettingsUiState
 import org.zipper.ant.forest.xposed.utils.PermissionCompat
 
@@ -35,6 +36,11 @@ class AppViewModel : ViewModel(), KoinComponent {
     }
 
     val storagePermissionState: StateFlow<Boolean> get() = _storagePermissionState
+
+    private val _antDialogState: MutableStateFlow<AntDialogUiState> by lazy {
+        MutableStateFlow(None)
+    }
+    val antDialogState: StateFlow<AntDialogUiState> get() = _antDialogState
 
     val uiState: StateFlow<MainUIState> = appProfileRepository.appProfilePreference
         .map { MainUIState.Success(it) }
@@ -66,5 +72,9 @@ class AppViewModel : ViewModel(), KoinComponent {
 
     fun onPermissionGranted(result: Boolean) {
         _storagePermissionState.value = result
+    }
+
+    fun onAntDialogStateChanged(antDialogUiState: AntDialogUiState) {
+        _antDialogState.value = antDialogUiState
     }
 }

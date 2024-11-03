@@ -10,6 +10,7 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import org.zipper.ant.forest.xposed.datastore.AppProfilePreference
 import org.zipper.ant.forest.xposed.repostory.AppProfileRepository
+import org.zipper.ant.forest.xposed.viewmodel.AntDataViewModel
 import org.zipper.ant.forest.xposed.viewmodel.AntViewModel
 import org.zipper.ant.forest.xposed.viewmodel.AppViewModel
 import org.zipper.antforestx.data.antDataModule
@@ -34,6 +35,7 @@ val appModule = module {
     }
     viewModelOf(::AppViewModel)
     viewModelOf(::AntViewModel)
+    viewModelOf(::AntDataViewModel)
 }
 
 

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,9 +19,41 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import org.zipper.ant.forest.xposed.R
 
+@Composable
+fun CustomDialog(
+    modifier: Modifier = Modifier,
+    title: String,
+    onDismiss: (() -> Unit)? = null,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    CustomDialog(
+        modifier = modifier,
+        title = {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleLarge,
+            )
+        }, onDismiss, content
+    )
+}
 
 @Composable
 fun CustomDialog(
+    title: @Composable (() -> Unit)? = null,
+    onDismiss: (() -> Unit)? = null,
+    content: @Composable ColumnScope.() -> Unit
+){
+    CustomDialog(
+        modifier = Modifier.verticalScroll(rememberScrollState()),
+        title = title,
+        onDismiss = onDismiss,
+        content = content
+    )
+}
+
+@Composable
+fun CustomDialog(
+    modifier: Modifier = Modifier,
     title: @Composable (() -> Unit)? = null,
     onDismiss: (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit
@@ -36,7 +67,7 @@ fun CustomDialog(
         properties = DialogProperties(usePlatformDefaultWidth = false),
         title = title,
         text = {
-            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+            Column(modifier) {
                 content()
             }
         },

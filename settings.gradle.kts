@@ -25,6 +25,6 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 rootProject.name = "AntForestX"
 include(":app")
-include(":core")
-include(":model")
+include(":xposed")
 include(":data")
+include(":core")
