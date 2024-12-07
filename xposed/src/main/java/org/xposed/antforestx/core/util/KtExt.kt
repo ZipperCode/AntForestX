@@ -1,10 +1,5 @@
 package org.xposed.antforestx.core.util
 
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.adapter
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.serializer
 import org.json.JSONArray
 import org.json.JSONObject
 import timber.log.Timber
@@ -50,10 +45,30 @@ fun JSONArray?.isNullOrEmpty(): Boolean {
     return this == null || length() == 0
 }
 
-fun String.safeToInt():Int {
+fun String.safeToInt(): Int {
     return try {
         toInt()
-    } catch (e:Exception) {
+    } catch (e: Exception) {
         0
     }
+}
+
+fun JSONObject.obj(key: String): JSONObject {
+    return this.optJSONObject(key) ?: JSONObject()
+}
+
+fun JSONObject.int(key: String): Int {
+    return this.optInt(key)
+}
+
+fun JSONObject.str(key: String): String {
+    return this.optString(key)
+}
+
+fun JSONObject.bool(key: String): Boolean {
+    return this.optBoolean(key)
+}
+
+fun JSONObject.array(key: String): JSONArray {
+    return this.optJSONArray(key) ?:JSONArray()
 }

@@ -2,8 +2,6 @@ package org.xposed.antforestx.core.manager
 
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import org.xposed.antforestx.core.bean.CooperateInfoBean
-import org.xposed.antforestx.core.util.FileDataProvider
 import org.zipper.antforestx.data.bean.AntForestPropData
 import org.zipper.antforestx.data.bean.QuestionData
 import org.zipper.antforestx.data.bean.VitalityExchangedPropData
@@ -25,9 +23,6 @@ object DataInfoManager : KoinComponent {
         return ""
     }
 
-    suspend fun mergeSaveCooperateInfo(cooperateInfo: List<CooperateInfoBean>) {
-        FileDataProvider.saveCooperate(cooperateInfo)
-    }
 
     suspend fun updateVitalityInfo(vitalityPropData: VitalityExchangedPropData) {
         dataRepository.updateVitalityData {

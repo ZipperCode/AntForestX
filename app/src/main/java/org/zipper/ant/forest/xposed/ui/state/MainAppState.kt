@@ -49,7 +49,6 @@ class MainAppState(
             launchSingleTop = true
             restoreState = true
         }
-
         when (topLevelDestination) {
             TopLevelDestination.Home -> navController.navigateToHome(topLevelNavOptions)
             TopLevelDestination.Logcat -> navController.navigateToLogcat(topLevelNavOptions)

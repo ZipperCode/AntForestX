@@ -115,6 +115,10 @@ data class AntManorConfig(
      */
     val enableFarm: Boolean = true,
     /**
+     * 批量雇佣小鸡除草
+     */
+    val batchHireAnimal: Boolean = true,
+    /**
      * 收农场奖励
      */
     val collectFarmReward: Boolean = true,
@@ -129,5 +133,5 @@ data class AntManorConfig(
     /**
      * 是否做农场任务
      */
-    val doFarmTask: Boolean = true
+    val doOrchardTask: Boolean = true
 )

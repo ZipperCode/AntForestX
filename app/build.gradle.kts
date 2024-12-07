@@ -56,6 +56,7 @@ dependencies {
 //    implementation(project(":core"))
     implementation(projects.core)
     implementation(projects.data)
+    implementation(projects.xposed)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

@@ -55,6 +55,14 @@ data class AntForestStatisticsDay(
      */
     val sendFriendProp: Boolean = false,
     /**
+     * 步数
+     */
+    val stepNum: Int = 0,
+    /**
+     * 同步步数
+     */
+    val isSyncStep: Boolean = false,
+    /**
      * 日期
      */
     val date: String = "yyy-MM-dd"

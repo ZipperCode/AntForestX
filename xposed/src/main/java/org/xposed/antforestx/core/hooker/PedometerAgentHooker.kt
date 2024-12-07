@@ -27,7 +27,7 @@ object PedometerAgentHooker {
             if (originStep >= customStep) {
                 return@after
             }
-            if (UserManager.forestDayRecord.isSyncStep) {
+            if (UserManager.forestStatistics.isSyncStep) {
                 return@after
             }
             val newStep = getRandomStep()
@@ -41,7 +41,7 @@ object PedometerAgentHooker {
     }
 
     private fun getRandomStep(): Int {
-        val step = UserManager.forestDayRecord.todayStepNum
+        val step = UserManager.forestStatistics.stepNum
         val newStep = RandomUtils.nextInt(step, step + 2000)
         return min(min(ConfigManager.otherConfig.customStepNum, 50000), newStep)
     }

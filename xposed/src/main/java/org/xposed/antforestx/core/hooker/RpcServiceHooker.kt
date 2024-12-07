@@ -1,5 +1,6 @@
 package org.xposed.antforestx.core.hooker
 
+import android.util.Log
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam
 import org.xposed.antforestx.core.AntRuntime.classLoader
 import org.xposed.antforestx.core.bean.ClassMemberWrap
@@ -33,6 +34,9 @@ object RpcServiceHooker {
                 logger.e(
                     "${interfaces.simpleName}#Proxy#${method.name}() <= result = $res"
                 )
+                if (args[0].toString() == "com.alipay.antfarm.orchardIndex") {
+                    Log.w("AntForest", "orchardIndex Trace = ${Log.getStackTraceString(Throwable())}")
+                }
                 logger.i(
                     "================================================================================================\n"
                 )

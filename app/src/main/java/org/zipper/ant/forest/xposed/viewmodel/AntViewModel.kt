@@ -314,7 +314,7 @@ class AntViewModel : ViewModel(), KoinComponent {
     }
 
     fun enableDoFarmTask(enable: Boolean) = antConfigRepository.updateManor {
-        it.copy(doFarmTask = enable)
+        it.copy(doOrchardTask = enable)
     }
 
     /**

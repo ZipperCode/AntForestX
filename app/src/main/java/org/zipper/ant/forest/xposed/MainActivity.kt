@@ -63,13 +63,13 @@ class MainActivity : FragmentActivity(), KoinComponent {
                 onDispose {}
             }
 
-            val appState = rememberMainAppState()
+
 
             AntForestXTheme(
                 darkTheme = darkTheme,
                 dynamicColor = shouldDisableDynamicTheming(uiState)
             ) {
-                AntForestXApp(appViewModel, appState)
+                AntForestXApp(appViewModel)
             }
         }
     }

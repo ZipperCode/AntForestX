@@ -378,7 +378,7 @@ fun ProfileManorPageContent(
         ProfileSwitchRow(title = "收取奖励", checked = manorConfig.collectFarmReward, viewModel::collectFarmReward)
         SettingRowArrow(title = "施肥次数")
         ProfileSwitchRow(title = "捉鸡", checked = manorConfig.isCatchChicks, viewModel::enableCatchChicks)
-        ProfileSwitchRow(title = "做农场任务", checked = manorConfig.doFarmTask, viewModel::enableDoFarmTask)
+        ProfileSwitchRow(title = "做农场任务", checked = manorConfig.doOrchardTask, viewModel::enableDoFarmTask)
     }
 }
 

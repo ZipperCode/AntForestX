@@ -18,8 +18,10 @@ import org.xposed.antforestx.core.util.onSuccessCatching
 import org.xposed.antforestx.core.util.success
 import org.zipper.antforestx.data.bean.QuestionData
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
-import kotlin.math.log
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * 蚂蚁庄园
@@ -41,6 +43,8 @@ class AntManorTask : ITask {
 
     private var startEatTime = 0L
     private var remainTimeMinutes = 0
+
+    private var farmAnimalSize = 1
 
     override suspend fun start(): Unit = withContext(Dispatchers.IO + CoroutineName("AntManor")) {
         Timber.enableManor()
@@ -132,6 +136,11 @@ class AntManorTask : ITask {
 
     private suspend fun useSpeedProp() {
         syncAnimalStatus()
+        logger.i("使用加速卡 remainTimeMinutes = %s", remainTimeMinutes)
+        if (remainTimeMinutes <= 0) {
+            logger.e("获取剩余时间失败")
+            return
+        }
         AntFarmRpcCall.listFarmTool().onSuccessCatching {
             if (!it.success) {
                 logger.i("获取道具失败")
@@ -144,7 +153,6 @@ class AntManorTask : ITask {
                 if ("ACCELERATETOOL" != toolType) {
                     continue
                 }
-                val farmId = tool.getString("farmId")
                 val toolCount = tool.getInt("toolCount")
                 val toolHoldLimit = tool.getInt("toolHoldLimit")
                 val toolId = tool.optString("toolId")
@@ -152,16 +160,19 @@ class AntManorTask : ITask {
                 val accelerateSeconds = dataMap.optInt("accelerateSeconds")
                 if (accelerateSeconds > 0 && toolCount > 0) {
                     for (j in 0 until toolCount) {
-                        // 判断时间
-                        val remainTime = remainTimeMinutes - TimeUnit.SECONDS.toMinutes(3600)
-                        logger.i("计算使用加速卡后的时间为 = %s", remainTime)
-                        if (remainTime > 0) {
-                            AntFarmRpcCall.useFarmTool(farmId, toolId, toolType).onSuccessCatching { json ->
-                                if (json.success) {
-                                    remainTimeMinutes = remainTime.toInt()
-                                }
+                        val time = remainTimeMinutes.minutes - 3600.seconds
+                        if (time < 1.hours) {
+                            logger.i("使用加速卡后，剩余时间不足一小时，停止使用加速卡 %s", time)
+                            break
+                        }
+                        logger.i("使用加速卡后，剩余时间为： %s", time)
+                        AntFarmRpcCall.useFarmTool(farmId!!, toolId, toolType).onSuccessCatching { json ->
+                            if (json.success) {
+                                logger.i("加速卡使用成功，刷新状态")
+                                syncAnimalStatus()
                             }
                         }
+                        delay(3000)
                     }
                 }
 
@@ -230,7 +241,7 @@ class AntManorTask : ITask {
             val friendId = rewardVO.getString("friendId")
             val time = rewardVO.getLong("time")
             logger.i("打赏好友: %s %s爱心", friendId, rewardProductNum)
-            AntFarmRpcCall.rewardFriend(friendId, consistencyKey, rewardProductNum, time).onSuccessCatching {
+            AntFarmRpcCall.rewardFriend(consistencyKey, friendId, rewardProductNum, time).onSuccessCatching {
                 if (!it.success) {
                     logger.d("打赏好友失败 %s", it)
                     return@onSuccessCatching
@@ -494,6 +505,11 @@ class AntManorTask : ITask {
                     logger.d("任务未完成，跳过 %s", taskId)
                     continue
                 }
+                if (taskVO.optString("awardSubType") == "241101jinyushuijingjiao") {
+                    logger.i("金鱼水晶饺任务直接领取")
+                    AntFarmRpcCall.receiveFarmTaskAward(taskId)
+                    continue
+                }
                 if (awardCount > foodStockLimit - foodStock) {
                     logger.i("饲料已满，无法领取奖励")
                     break
@@ -548,11 +564,13 @@ class AntManorTask : ITask {
                         if (foodStock - 90 < 0) {
                             break
                         }
-                        AntFarmRpcCall.doFarmTask(bizKey).onSuccessCatching DoFarmTask@{ res ->
-                            if (res.success) {
-                                foodStock -= 90
+                        // [{"bizKey":"EXCHANGE_TASK","requestType":"RPC","sceneCode":"ANTFARM","source":"antfarm_villa","taskSceneCode":"ANTFARM_DRAW_TIMES_TASK"}]
+                        AntFarmRpcCall.doFarmTask(bizKey, "RPC", "antfarm_villa", "ANTFARM_DRAW_TIMES_TASK")
+                            .onSuccessCatching DoFarmTask@{ res ->
+                                if (res.success) {
+                                    foodStock -= 90
+                                }
                             }
-                        }
                     } else {
                         finishTask(taskId, "ANTFARM_DRAW_TIMES_TASK", title)
                     }
@@ -612,6 +630,17 @@ class AntManorTask : ITask {
                 }
                 delay(3000)
             }
+        }
+    }
+
+    private suspend fun receiveOrchardVisitAward() {
+        logger.i("执行庄园来访奖励")
+        AntFarmRpcCall.receiveOrchardVisitAward().onSuccessCatching {
+            if (!it.success) {
+                return@onSuccessCatching
+            }
+
+//            AntOrchardRpcCall.orchardSpreadManure()
         }
     }
 
@@ -755,7 +784,9 @@ class AntManorTask : ITask {
             foodStock = subFarmVO.optInt("foodStock")
             foodStockLimit = subFarmVO.optInt("foodStockLimit", 180)
             logger.i("当前饲料 = %s/%s", foodStock, foodStockLimit)
-            subFarmVO.optJSONArray("animals")?.forEach { animal ->
+            val animals = subFarmVO.optJSONArray("animals")
+            farmAnimalSize = animals?.length() ?: 1
+            animals?.forEach { animal ->
                 if (animal.optString("farmId") == animal.optString("masterFarmId")) {
                     val animalStatusVO = animal.optJSONObject("animalStatusVO")
                     val animalFeedStatus = animalStatusVO?.optString("animalFeedStatus")
@@ -767,17 +798,13 @@ class AntManorTask : ITask {
                         return@forEach
                     }
                     startEatTime = animal.optLong("startEatTime")
-                    val duration = System.currentTimeMillis() - startEatTime
-                    if (duration > 0) {
-                        val time = TimeUnit.MILLISECONDS.toMinutes(duration)
-                        val remainTime = TimeUnit.HOURS.toMinutes(3) - time
-                        remainTimeMinutes = if (remainTime > 100) {
-                            remainTime.toInt()
-                        } else {
-                            0
-                        }
-                        logger.i("当前动物正在吃，已持续 %s 分钟, 剩余 %s 分钟", time, remainTime)
-                    }
+                    logger.d("startEatTime = %s", startEatTime)
+                    val startDuration = startEatTime.milliseconds
+                    val endDuration = startEatTime.milliseconds + 4.hours
+                    val currentDuration = System.currentTimeMillis().milliseconds
+                    val remainTime = endDuration - System.currentTimeMillis().milliseconds
+                    remainTimeMinutes = remainTime.inWholeMinutes.toInt()
+                    logger.i("当前动物正在吃，已持续 %s, 剩余 %s 分钟", currentDuration - startDuration, remainTimeMinutes)
                 }
             }
         }

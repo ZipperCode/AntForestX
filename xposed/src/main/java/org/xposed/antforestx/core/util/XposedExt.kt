@@ -43,6 +43,19 @@ inline fun newMethodAfter(
     }
 }
 
+inline fun newUnsafeMethodAfter(
+    crossinline after: ((XC_MethodHook.MethodHookParam) -> Unit),
+): XC_MethodHook {
+    return object : XC_MethodHook() {
+        override fun afterHookedMethod(param: MethodHookParam?) {
+            if (param != null) {
+                after(param)
+            }
+        }
+    }
+}
+
+
 inline fun newMethodHook(
     crossinline before: ((XC_MethodHook.MethodHookParam) -> Unit),
     crossinline after: ((XC_MethodHook.MethodHookParam) -> Unit),
@@ -171,6 +184,15 @@ inline fun findAndHookMethodAfter(
     crossinline after: ((XC_MethodHook.MethodHookParam) -> Unit),
 ) {
     findAndHookMethodInternal(clazz, methodName, parameterTypes, newMethodAfter(after))
+}
+
+inline fun findAndHookMethodUnsafeAfter(
+    clazz: Class<*>?,
+    methodName: String,
+    vararg parameterTypes: Class<*>?,
+    crossinline after: ((XC_MethodHook.MethodHookParam) -> Unit),
+) {
+    findAndHookMethodInternal(clazz, methodName, parameterTypes, newUnsafeMethodAfter(after))
 }
 
 fun findAndHookConstructorAfter(

@@ -4,14 +4,16 @@ import kotlinx.coroutines.flow.collectLatest
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.xposed.antforestx.core.util.DateUtils
+import org.xposed.forestx.core.utils.AppCoroutine
 import org.zipper.antforestx.data.config.AntBasicConfig
 import org.zipper.antforestx.data.config.AntConfig
 import org.zipper.antforestx.data.config.AntForestConfig
 import org.zipper.antforestx.data.config.AntManorConfig
 import org.zipper.antforestx.data.config.AntOtherConfig
 import org.zipper.antforestx.data.repository.IAntConfigRepository
+import timber.log.Timber
 
-object ConfigManager: KoinComponent {
+object ConfigManager : KoinComponent {
 
     private val iAntConfigRepository: IAntConfigRepository by inject<IAntConfigRepository>()
 
@@ -33,8 +35,6 @@ object ConfigManager: KoinComponent {
      *
      */
     val enableAncientTree: Boolean get() = forestConfig.isProtectAncientTree && isAncientTreeWeek
-
-    val enableBookRead get() = false
 
     /**
      * 是否可以使用双击卡
@@ -58,7 +58,7 @@ object ConfigManager: KoinComponent {
         }
 
     suspend fun init() {
-        runCatching {
+        AppCoroutine.launch {
             iAntConfigRepository.configFlow.collectLatest {
                 config = it
             }

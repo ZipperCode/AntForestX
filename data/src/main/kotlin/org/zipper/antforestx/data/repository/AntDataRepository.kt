@@ -6,10 +6,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.xposed.forestx.core.utils.AppCoroutine
 import org.zipper.antforestx.data.DataStoreType
-import org.zipper.antforestx.data.bean.AlipayUser
 import org.zipper.antforestx.data.bean.AlipayUserData
 import org.zipper.antforestx.data.bean.AntForestPropData
+import org.zipper.antforestx.data.bean.CooperateData
 import org.zipper.antforestx.data.bean.QuestionData
 import org.zipper.antforestx.data.bean.QuestionMap
 import org.zipper.antforestx.data.bean.VitalityExchangedPropData
@@ -45,22 +46,32 @@ internal class AntDataRepository() : IAntDataRepository, KoinComponent {
     override val forestPropDataFlow: Flow<AntForestPropData>
         get() = forestPropDataStore.data
 
+    private val cooperateDataStore: DataStore<CooperateData> by inject<DataStore<CooperateData>>(
+        DataStoreType.CooperateData
+    )
+
+    override val cooperateInfoBeanFlow: Flow<CooperateData>
+        get() = cooperateDataStore.data
 
     override suspend fun getQuestionData(questionId: String): QuestionData? {
         val deferred = CompletableDeferred<QuestionData?>()
-        questionDataFlow.collectLatest {
-            if (deferred.isCompleted) {
-                return@collectLatest
+        AppCoroutine.launch {
+            questionDataFlow.collectLatest {
+                if (deferred.isCompleted) {
+                    return@collectLatest
+                }
+                deferred.complete(it[questionId])
             }
-            deferred.complete(it[questionId])
         }
         return deferred.await()
     }
 
     override suspend fun addQuestionData(questionData: QuestionData) {
         questionDataStore.updateData {
-            it[questionData.questionId.toString()] = questionData
-            return@updateData it
+            return@updateData QuestionMap().apply {
+                putAll(it)
+                put(questionData.questionId.toString(), questionData)
+            }
         }
     }
 
@@ -72,18 +83,11 @@ internal class AntDataRepository() : IAntDataRepository, KoinComponent {
 
     override suspend fun updateAlipayUserData(block: (AlipayUserData) -> AlipayUserData) {
         try {
-            val data = AlipayUserData()
-            data.put("aaaaa", AlipayUser("11111", "", "", "", "", false))
-            data.put("bbbb", AlipayUser("222", "", "", "", "", false))
-            data.put("cccc", AlipayUser("111333311", "", "", "", "", false))
-            Timber.d("写入数据开始")
             alipayUserDataStore.updateData {
-                data
+                block(it)
             }
-            Timber.d("写入数据完成")
         } catch (e: Exception) {
             Timber.e(e)
-            Timber.e("写入数据错误")
         }
     }
 

@@ -7,7 +7,7 @@ typealias AlipayUserData = HashMap<String, AlipayUser>
 
 
 @Serializable
-data class AlipayUser(
+data class AlipayUser constructor(
     /**
      * 用户名
      */
@@ -31,7 +31,11 @@ data class AlipayUser(
     /**
      * 是否拉黑
      */
-    val blacked: Boolean = false
+    val blacked: Boolean = false,
+    /**
+     * 是否自己
+     */
+    val isMine: Boolean = false
 ) {
 
     val friendNameInfo: String get() = "${displayName}(${account})"

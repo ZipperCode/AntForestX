@@ -2,7 +2,6 @@ package org.xposed.antforestx.core.hooker
 
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import kotlinx.coroutines.delay
-import org.xposed.antforestx.core.bean.AlipayFriendBean
 import org.xposed.antforestx.core.bean.ClassMemberWrap
 import org.xposed.antforestx.core.util.getObjectFieldOrDefault
 import org.xposed.antforestx.core.util.invokeMethodByName
@@ -61,11 +60,12 @@ object UserIndependentCacheHooker {
                 val displayName = friend.getObjectFieldOrDefault<String>("displayName", "")
                 var remarkName = friend.getObjectFieldOrDefault<String>("remarkName", "")
                 val blacked = friend.getObjectFieldOrDefault<Boolean>("blacked", false)
+                val accountType = friend.getObjectFieldOrDefault<String>("accountType", "")
                 if (remarkName.isBlank()) {
                     remarkName = nickName
                 }
                 remarkName += "|$name"
-                val item = AlipayUser(userId, account, name, nickName, displayName, blacked)
+                val item = AlipayUser(userId, account, name, nickName, displayName, blacked, accountType.isNotEmpty())
                 userListData[userId] = item
                 Timber.d("UserIndependentCacheHooker# AlipayUser = %s", item)
             }

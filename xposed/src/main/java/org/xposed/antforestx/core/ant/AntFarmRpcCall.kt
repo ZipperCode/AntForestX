@@ -296,6 +296,7 @@ object AntFarmRpcCall {
 
     /**
      * 收集便便
+     *@param manurePotNO 1 | 1,2,3
      */
     suspend fun collectManurePot(manurePotNO: String): Result<JSONObject> {
         // [{"isSkipTempLimit":false,"manurePotNOs":"1","requestType":"NORMAL","sceneCode":"ANTFARM","source":"ANTFOREST","version":"1.8.2302070202.46"}]
@@ -479,16 +480,20 @@ object AntFarmRpcCall {
     }
 
     /* 日常任务 */
-    suspend fun doFarmTask(bizKey: String, requestType: String = "NORMAL", source: String = "H5"): Result<JSONObject> {
+    suspend fun doFarmTask(bizKey: String, requestType: String = "NORMAL", source: String = "H5", taskSceneCode: String? = null): Result<JSONObject> {
         // [{"bizKey":"ANTMEMBER_RICHANGQIANDAO","requestType":"NORMAL","sceneCode":"ANTFARM","source":"H5","version":"1.8.2302070202.46"}]
-        val json = mapOf(
+        val json = mutableMapOf(
             "bizKey" to bizKey,
             "requestType" to requestType,
             "sceneCode" to "ANTFARM",
-            "source" to "H5",
+            "source" to source,
             "version" to VERSION
-        ).toListJson()
-        return requestV2("com.alipay.antfarm.doFarmTask", json)
+        )
+        if (!taskSceneCode.isNullOrEmpty()) {
+            json["taskSceneCode"] = taskSceneCode
+        }
+
+        return requestV2("com.alipay.antfarm.doFarmTask",json.toListJson())
     }
 
     suspend fun queryTabVideoUrl(): Result<JSONObject> {
@@ -627,5 +632,21 @@ object AntFarmRpcCall {
             "source" to "antfarm_villa"
         ).toListJson()
         return requestV2("com.alipay.antfarm.DrawPrize", json)
+    }
+
+    /**
+     * 庄园来访
+     */
+    suspend fun receiveOrchardVisitAward(): Result<JSONObject> {
+        // [{"diversionSource":"antfarm","requestType":"NORMAL","sceneCode":"ORCHARD","source":"ANTFARM_ORCHARD_PLUS","version":"v2"}]
+        val json = mapOf(
+            "diversionSource" to "antfarm",
+            "requestType" to "NORMAL",
+            "sceneCode" to "ORCHARD",
+            "source" to "ANTFARM_ORCHARD_PLUS",
+            "version" to "v2"
+        )
+
+        return requestV2("com.alipay.antorchard.receiveOrchardVisitAward", json.toListJson())
     }
 }

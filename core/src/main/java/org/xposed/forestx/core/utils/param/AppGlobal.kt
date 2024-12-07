@@ -2,7 +2,7 @@ package org.xposed.forestx.core.utils.param
 
 import java.util.concurrent.ConcurrentHashMap
 
-object AppPreference {
+object AppGlobal {
 
     private val global = ConcurrentHashMap<PreferenceKey<*>, Any?>()
 

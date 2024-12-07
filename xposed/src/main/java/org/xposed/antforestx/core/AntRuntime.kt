@@ -3,8 +3,6 @@ package org.xposed.antforestx.core
 import android.app.Application
 import android.app.Service
 import android.os.Process
-import androidx.datastore.core.DataStore
-import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -28,14 +26,15 @@ import org.xposed.antforestx.core.tasks.AntOceanTask
 import org.xposed.antforestx.core.tasks.ITask
 import org.xposed.antforestx.core.util.AntForestNotification
 import org.xposed.antforestx.core.util.AntToast
+import org.xposed.antforestx.core.util.findAndHookConstructorAfter
 import org.xposed.antforestx.core.util.findAndHookMethodAfter
 import org.xposed.antforestx.core.util.findAndHookMethodBefore
 import org.xposed.antforestx.core.util.log.init
-import org.xposed.antforestx.core.util.runCatch
 import org.xposed.forestx.core.utils.AppCoroutine
 import org.zipper.antforestx.data.antDataModule
 import timber.log.Timber
 import java.io.File
+import java.util.concurrent.CopyOnWriteArraySet
 
 
 object AntRuntime {
@@ -46,6 +45,8 @@ object AntRuntime {
     private var processName = ""
 
     lateinit var classLoader: ClassLoader
+
+    private val classLoaders: MutableSet<ClassLoader> = CopyOnWriteArraySet()
 
     private val isMainProgress get() = packageName == processName
 
@@ -59,6 +60,7 @@ object AntRuntime {
     )
 
     fun init(param: LoadPackageParam) {
+//        enumAllClassLoader(param)
         if (hasInit) {
             return
         }
@@ -70,11 +72,8 @@ object AntRuntime {
         }
 
         if (isMainProgress) {
-            Timber.init()
             hookExceptionHandler()
-
             findAndHookMethodAfter(Application::class.java, "onCreate") {
-                logger.d("Application.onCreate(%s)", it.thisObject)
                 kotlin.runCatching {
                     val koinApplication = GlobalContext.getKoinApplicationOrNull()
                     if (koinApplication == null) {
@@ -86,35 +85,16 @@ object AntRuntime {
                         GlobalContext.loadKoinModules(antDataModule)
                     }
                 }
+                initHooker(param)
+                Timber.init()
+                logger.d("Application.onCreate(%s)", it.thisObject)
+
                 AppCoroutine.launch {
                     ConfigManager.init()
-                }
-                AppCoroutine.launch {
                     UserManager.init()
+                    initTasks()
                 }
-                initHooker(param)
-                AppCoroutine.launch {
 
-                    val api26Impl = XposedHelpers.findClassIfExists("androidx.datastore.core.Api26Impl", DataStore::class.java.classLoader)
-                    Timber.e("androidx.datastore.core.Api26Impl >> %s", api26Impl)
-                    findAndHookMethodAfter(api26Impl, "move", File::class.java, File::class.java) { hookParam ->
-                        Timber.e("执行Api26Impl#move")
-                        val src = hookParam.args[0] as File
-                        val dst = hookParam.args[1] as File
-                        val result = hookParam.result
-                        Timber.e("src = %s, dst = %s, result = %s", src, dst, result)
-                        runCatch {
-                            Timber.e("src = %s ", src.exists())
-                        }
-                        runCatch {
-                            Timber.e("dst = %s ", dst.exists())
-                        }
-                        // Timber.e("dst = %s ", dst.readText())
-                    }
-
-                    UserManager.initFriendsData()
-//                    initTasks()
-                }
             }
         }
         hasInit = true
@@ -132,6 +112,30 @@ object AntRuntime {
         }
         findAndHookMethodBefore(Thread::class.java, "setDefaultUncaughtExceptionHandler", Thread.UncaughtExceptionHandler::class.java) {
             it.args[0] = hookExceptionHandler
+        }
+    }
+
+    private fun enumAllClassLoader(param: LoadPackageParam) {
+        classLoaders.add(param.classLoader)
+        param.findAndHookConstructorAfter(
+            "dalvik.system.DexPathList",
+            ClassLoader::class.java,
+            String::class.java,
+            String::class.java,
+            File::class.java,
+            Boolean::class.javaPrimitiveType
+        ) {
+            val classLoader = it.args[0] as ClassLoader
+            classLoaders.add(classLoader)
+            val copyLoaders = ArrayList(classLoaders)
+            for (loader in copyLoaders) {
+                val parent = loader.parent ?: continue
+                if (parent in classLoaders) {
+                    classLoaders.remove(parent)
+                }
+            }
+//            val finalName = classLoaders.map { it.javaClass.name }
+//            Log.d("AntForestX", "最终的类加载器 = $finalName")
         }
     }
 

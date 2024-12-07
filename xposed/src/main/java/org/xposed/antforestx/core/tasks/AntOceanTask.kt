@@ -105,7 +105,7 @@ class AntOceanTask : ITask {
                         val bubble = bubbles.getJSONObject(j)
                         val collectedEnergy = bubble.optInt("collectedEnergy")
                         logger.i("收取海洋能量[%s]的海洋能量[%sg]", userName, collectedEnergy)
-                        UserManager.addNewEnergy(collectedEnergy)
+                        UserManager.updateEnergy(collectedEnergy)
                     }
                 } else {
                     logger.d("收取海洋能量失败: %s", collectJson)

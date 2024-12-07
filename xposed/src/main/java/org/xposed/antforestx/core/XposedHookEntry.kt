@@ -8,6 +8,7 @@ import org.xposed.antforestx.core.util.ModuleHelper
 import org.xposed.antforestx.core.util.getObjectField
 import org.xposed.antforestx.core.util.invokeStaticMethodByName
 
+
 class XposedHookEntry : IXposedHookLoadPackage {
 
     companion object {
@@ -25,7 +26,5 @@ class XposedHookEntry : IXposedHookLoadPackage {
         classLoader = llparam.classLoader
         ModuleHelper.initModule(llparam)
         AntRuntime.init(llparam)
-//        RpcServiceHooker.hookGetRpcProxy(llparam)
-
     }
 }

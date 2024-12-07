@@ -2,22 +2,22 @@ package org.zipper.antforestx.data.provider
 
 import android.content.Context
 import android.os.Environment
-import android.provider.Settings.System.canWrite
-import android.util.Log
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.xposed.forestx.core.utils.param.AppGlobal
+import org.xposed.forestx.core.utils.param.currentUserIdKey
 import org.zipper.antforestx.data.utils.DateUtils
 import timber.log.Timber
 import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
-import java.nio.file.Files
 
 object StoreFileProvider : KoinComponent {
 
     private val context: Context by inject<Context>()
 
     private const val MAIN_DIR = "AntForestX"
+
+    private val userId: String get() = AppGlobal[currentUserIdKey]
+
     private val mainDirectory: File by lazy {
         // 是否支持传统存储 Environment.isExternalStorageLegacy()
         val storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
@@ -47,6 +47,19 @@ object StoreFileProvider : KoinComponent {
         return@lazy file
     }
 
+    val logcatRootDir: File by lazy {
+        var file = File(mainMediaDirectory, "logcat")
+        if (file.exists() || file.mkdirs()) {
+            return@lazy file
+        }
+
+        file = File(mainDirectory, "logcat")
+        if (file.exists() || file.mkdirs()) {
+            return@lazy file
+        }
+        return@lazy File(context.filesDir, "${MAIN_DIR}/logcat")
+    }
+
     fun requireAntConfigFile(): File {
         return requireAvailableFile("config/config.json")
     }
@@ -65,6 +78,10 @@ object StoreFileProvider : KoinComponent {
 
     fun requireAlipayUserDataFile(): File {
         return requireAvailableFile("data/alipay_user.json")
+    }
+
+    fun requireCooperateDataFile(): File {
+        return requireAvailableFile("data/cooperate.json")
     }
 
     fun requireForestStatisticsDayFile(dateStr: String = DateUtils.getYearMonthDay()): File {

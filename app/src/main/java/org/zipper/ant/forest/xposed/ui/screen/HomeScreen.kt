@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,23 +19,23 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.navOptions
+import org.koin.androidx.compose.koinViewModel
+import org.zipper.ant.forest.xposed.navigation.navigateToWebView
 import org.zipper.ant.forest.xposed.ui.icon.AppIcons
 import org.zipper.ant.forest.xposed.ui.icon.Github
-import org.zipper.ant.forest.xposed.ui.util.LocalSnackbarHost
+import org.zipper.ant.forest.xposed.ui.util.LocalRootNavController
+import org.zipper.ant.forest.xposed.viewmodel.AntDataViewModel
 
 
 @Composable
@@ -94,7 +93,11 @@ private fun HomeActivePanel(
 }
 
 @Composable
-private fun HomeDetailPanel() {
+private fun HomeDetailPanel(
+    dataViewModel: AntDataViewModel = koinViewModel()
+) {
+
+    val homeUiState by dataViewModel.homeUiState.collectAsStateWithLifecycle()
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
@@ -104,26 +107,21 @@ private fun HomeDetailPanel() {
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            Text(text = "详细信息", fontSize = 16.sp, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(8.dp))
-            InfoMessage("蚂蚁用户", "蚂蚁插件蚂蚁插件(123123123123123123123)")
-            InfoMessage("好友数量", "10")
-            InfoMessage("总收取能量", "10000kg")
-            InfoMessage("当日收取能量", "1000g")
-            InfoMessage("当日收取能量", "1000g")
-            InfoMessage("当日收取能量", "1000g")
-            InfoMessage("当日收取能量", "1000g")
-            InfoMessage("当日收取能量", "1000g")
-            InfoMessage("当日收取能量", "1000g")
-            InfoMessage("当日收取能量", "1000g")
+            InfoMessage("蚂蚁用户", "(${homeUiState.displayUser})")
+            InfoMessage("好友数量", "${homeUiState.friendCount}个")
+            InfoMessage("当日收取能量", "${homeUiState.dayCollectEnergy}g")
+            InfoMessage("当日获得活力值", "${homeUiState.dayVitality}")
+            InfoMessage("当日好友浇水", "${homeUiState.dayWatering}g")
+            InfoMessage("当日助力能量", "${homeUiState.dayHelpEnergy}g")
+            InfoMessage("当日步数", "${homeUiState.dayStepNum}")
         }
     }
 }
 
 @Composable
 private fun HomeGithubPanel() {
-    val coroutineScope: CoroutineScope = rememberCoroutineScope()
-    val snackBarHost = LocalSnackbarHost.current
+    val rootNavController = LocalRootNavController.current
     ElevatedCard(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -147,9 +145,11 @@ private fun HomeGithubPanel() {
                     text = "开源地址", fontSize = 16.sp,
                     fontWeight = FontWeight.Bold, color = Color(0xFF0E9FF2),
                     modifier = Modifier.clickable {
-                        coroutineScope.launch {
-                            snackBarHost.showSnackbar("点击了文字")
-                        }
+                        rootNavController.navigateToWebView(
+                            "https://github.com/ZipperCode/AntForestX",
+                            navOptions {
+                                restoreState = true
+                            })
                     }
                 )
             }

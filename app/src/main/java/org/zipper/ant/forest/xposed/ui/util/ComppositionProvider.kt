@@ -9,11 +9,15 @@ package org.zipper.ant.forest.xposed.ui.util
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.compositionLocalOf
 import androidx.navigation.NavHostController
-import org.zipper.ant.forest.xposed.viewmodel.AppViewModel
 import org.zipper.ant.forest.xposed.ui.state.MainAppState
+import org.zipper.ant.forest.xposed.viewmodel.AppViewModel
 
 val LocalSnackbarHost = compositionLocalOf<SnackbarHostState> {
     error("CompositionLocal LocalSnackbarController not present")
+}
+
+val LocalRootNavController = compositionLocalOf<NavHostController> {
+    error("CompositionLocal LocalRootNavControlloer not present")
 }
 
 val LocalNavController = compositionLocalOf<NavHostController> {

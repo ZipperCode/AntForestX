@@ -19,7 +19,7 @@ abstract class FilePrintTimberTree(
     private val logcatCoroutine: CoroutineScope = CoroutineScope(Dispatchers.IO)
 
     private val fmt: SimpleDateFormat by lazy {
-        SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA)
+        SimpleDateFormat("HH:mm:ss", Locale.CHINA)
     }
 
     private val printStream: PrintStream? by lazy {

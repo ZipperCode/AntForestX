@@ -9,6 +9,7 @@ import org.xposed.antforestx.core.ant.AntGoldRpcCall
 import org.xposed.antforestx.core.ant.AntMemberRpcCall
 import org.xposed.antforestx.core.manager.ConfigManager
 import org.xposed.antforestx.core.manager.UserManager
+import org.xposed.antforestx.core.util.isNullOrEmpty
 import org.xposed.antforestx.core.util.isSuccess
 import org.xposed.antforestx.core.util.log.enableMember
 import org.xposed.antforestx.core.util.onSuccessCatching
@@ -107,6 +108,10 @@ class AntMemberTask : ITask {
             } else if (it.has("certList")) {
                 certList = it.getJSONArray("certList")
             }
+            if (certList.isNullOrEmpty()) {
+                logger.i("没有积分可收取")
+                return@onSuccessCatching
+            }
             var totalPoint = 0
             for (i in 0 until certList.length()) {
                 val cert = certList.getJSONObject(i)
@@ -152,8 +157,8 @@ class AntMemberTask : ITask {
 
                 if (groupCode == "TASK_CONV" || type == "OTHERS") {
                     logger.i(
-                        "不执行其他任务，分类 = %s, 类型 = %s, 任务数量 = %s",
-                        groupCode, type, taskList.length()
+                        "不执行其他任务，分类 = %s, 类型 = %s, 任务数量 = %s, 任务 = %s",
+                        groupCode, type, taskList.length(), taskList.toString()
                     )
                     continue
                 }
@@ -175,6 +180,10 @@ class AntMemberTask : ITask {
                         count = extInfo.optString("PERIOD_TARGET_COUNT").safeToInt()
                     }
                     logger.i("任务: %s %s current = %s, count = %s", id, name, current, count)
+                    if (count == 0) {
+                        handleTask(id, oraScm, name)
+                        continue
+                    }
                     while (current < count) {
                         handleTask(id, oraScm, name)
                         current++
@@ -366,11 +375,11 @@ class AntMemberTask : ITask {
                 // 签到
                 merchantSignIn()
             }
-            if (ConfigManager.otherConfig.enableMerchantTask) {
-                // 任务
-                merchantTask()
-                merchantTask()
-            }
+//            if (ConfigManager.otherConfig.enableMerchantTask) {
+//                // 任务
+//                merchantTask()
+//                merchantTask()
+//            }
         }
         logger.i("商家服务任务执行完成")
     }
